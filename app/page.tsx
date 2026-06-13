@@ -3,14 +3,16 @@
 import { useState } from "react";
 
 import StudentForm from "../components/StudentForm";
-import SkillGap from "../components/SkillGap";
-import ReadinessScore from "../components/ReadinessScore";
+import AnalysisCard from "../components/AnalysisCard";
 
 import { careerPaths } from "../lib/careerPaths";
 import { calculateReadiness } from "../lib/scoring";
 
 export default function Home() {
   const [missingSkills, setMissingSkills] =
+    useState([]);
+
+  const [strengths, setStrengths] =
     useState([]);
 
   const [score, setScore] =
@@ -35,6 +37,7 @@ export default function Home() {
       );
 
     setMissingSkills(missing);
+    setStrengths(readiness.matchedSkills);
     setScore(readiness.score);
   };
 
@@ -45,15 +48,11 @@ export default function Home() {
       />
 
       {score !== null && (
-        <>
-          <ReadinessScore
-            score={score}
-          />
-
-          <SkillGap
-            missingSkills={missingSkills}
-          />
-        </>
+        <AnalysisCard
+          score={score}
+          strengths={strengths}
+          missingSkills={missingSkills}
+        />
       )}
     </main>
   );
