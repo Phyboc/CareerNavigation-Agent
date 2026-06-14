@@ -12,7 +12,7 @@ export default function ReadinessScore({
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.32em] text-cyan-300">Readiness assessment</p>
           <h3 className="mt-2 text-2xl font-semibold tracking-tight text-white">Career readiness score</h3>
-          <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-300">The score combines skill match, project signal, and study consistency to give a fast, demo-friendly view of fit.</p>
+          <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-300">Your readiness score combines skill match, project experience, and study consistency.</p>
         </div>
         <div className="relative flex h-32 w-32 items-center justify-center rounded-full border border-cyan-400/20 bg-cyan-400/10 text-center">
           <svg className="absolute inset-0 -rotate-90" viewBox="0 0 120 120" aria-hidden="true">

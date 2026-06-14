@@ -47,9 +47,9 @@ export default function StudentForm({ onAnalyze, loading = false }) {
     <form onSubmit={handleSubmit} className="rounded-[32px] border border-white/10 bg-slate-950/80 p-6 shadow-[0_30px_80px_rgba(2,6,23,0.3)] backdrop-blur sm:p-8">
       <div className="flex flex-col gap-4 border-b border-white/10 pb-5 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-300">Student profile form</p>
-          <h2 className="mt-2 text-2xl font-semibold text-white">Analyze a student profile</h2>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">Enter the profile details and run the reasoning workflow. The same shape is used by the API route and the dashboard.</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-300">Career assessment</p>
+          <h2 className="mt-2 text-2xl font-semibold text-white">Tell us about yourself</h2>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">Enter your profile details and CareerCompass AI will analyze your readiness, skill gaps, and career matches.</p>
         </div>
         <button type="button" onClick={loadSample} className="inline-flex h-11 items-center justify-center rounded-full border border-cyan-400/25 bg-cyan-400/10 px-4 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-400/20">
           Load sample profile
@@ -95,9 +95,9 @@ export default function StudentForm({ onAnalyze, loading = false }) {
 
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
         <button type="submit" disabled={loading} className="inline-flex h-12 items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 px-6 text-sm font-semibold text-slate-950 transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70">
-          {loading ? "Analyzing profile..." : "Run agent workflow"}
+          {loading ? "Analyzing profile..." : "Run Career Assessment"}
         </button>
-        <p className="text-sm text-slate-400">No auth. No database. Hackathon-friendly and easy to demo.</p>
+        <p className="text-sm text-slate-400">Your results will be saved for this session.</p>
       </div>
     </form>
   );
