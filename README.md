@@ -122,6 +122,12 @@ GitHub Copilot was used during development to:
 - [ ] Multi-language support
 - [ ] Admin dashboard for career counselors
 
+## Recent Updates
+
+- Added `generateResumeAnalysis` import in `lib/analyzer.js` to enhance resume processing capabilities.
+- Implemented defensive checks in `components/AIMentorInsights.jsx` to gracefully handle missing mentor data and prevent runtime errors.
+- Updated `lib/mentorInsights.js` to always return a default object (`{ paragraphs: [], highlight: {} }`) on failures, ensuring stable UI rendering.
+
 ---
 
 ## License
