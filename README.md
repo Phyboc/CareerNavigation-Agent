@@ -75,11 +75,6 @@ lib/
 
 ---
 
-## Screenshots
-
-> Add screenshots of the landing page, analysis dashboard, and resume analyzer here before submission.
-
----
 
 ## Tech Stack
 
