@@ -7,6 +7,10 @@ export default function AIMentorInsights({ analysis }) {
 
 	const mentor = buildMentorInsights(analysis);
 
+	// Ensure we have a safe fallback if the mentor insights failed or are missing
+	const paragraphs = mentor?.paragraphs ?? [];
+	const highlight = mentor?.highlight ?? {};
+
 	return (
 		<SectionCard
 			eyebrow="AI Mentor Insights"
@@ -19,17 +23,21 @@ export default function AIMentorInsights({ analysis }) {
 						AI
 					</div>
 					<div className="space-y-4">
-						{mentor.paragraphs.map((paragraph, index) => (
-							<p key={index} className="text-sm leading-7 text-slate-200 animate-fade-in">
-								{paragraph}
-							</p>
-						))}
+						{paragraphs.length > 0 ? (
+							paragraphs.map((paragraph, index) => (
+								<p key={index} className="text-sm leading-7 text-slate-200 animate-fade-in">
+									{paragraph}
+								</p>
+							))
+						) : (
+							<p className="text-sm text-slate-400">Loading mentor insights…</p>
+						)}
 					</div>
 				</div>
 				<div className="mt-6 flex flex-wrap gap-2">
-					<Badge tone="cyan">Top match: {mentor.highlight.topCareer}</Badge>
-					<Badge tone="emerald">Readiness: {mentor.highlight.readinessScore}%</Badge>
-					<Badge tone="amber">Focus: {mentor.highlight.estimatedWeeks} weeks</Badge>
+					{highlight.topCareer && <Badge tone="cyan">Top match: {highlight.topCareer}</Badge>}
+					{highlight.readinessScore !== undefined && <Badge tone="emerald">Readiness: {highlight.readinessScore}%</Badge>}
+					{highlight.estimatedWeeks && <Badge tone="amber">Focus: {highlight.estimatedWeeks} weeks</Badge>}
 				</div>
 			</div>
 		</SectionCard>

@@ -30,6 +30,7 @@ export default function RootLayout({
 		<html
 			lang="en"
 			className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+			suppressHydrationWarning={true}
 		>
 			<body className="flex min-h-full flex-col bg-slate-950 text-slate-100">
 				<AnalysisProvider>
