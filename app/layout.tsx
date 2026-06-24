@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Outfit } from "next/font/google";
 import "./globals.css";
 
 import Navbar from "../components/Navbar";
@@ -16,6 +16,11 @@ const geistMono = Geist_Mono({
 	subsets: ["latin"],
 });
 
+const outfit = Outfit({
+	variable: "--font-outfit",
+	subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
 	title: "CareerCompass AI — Your Personal AI Career Mentor",
 	description: "Discover your ideal career path, close skill gaps, and build a roadmap for success with AI-powered guidance.",
@@ -29,7 +34,7 @@ export default function RootLayout({
 	return (
 		<html
 			lang="en"
-			className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+			className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable} h-full antialiased`}
 			suppressHydrationWarning={true}
 		>
 			<body className="flex min-h-full flex-col bg-slate-950 text-slate-100">

@@ -12,14 +12,14 @@ export default function SkillGap({
       <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-300">A quick visual breakdown of what is already present, what is missing, and what should be learned first.</p>
 
       <div className="mt-6 grid gap-4 lg:grid-cols-3">
-        <div className="rounded-3xl border border-emerald-400/15 bg-emerald-400/5 p-4 transition duration-200 hover:border-emerald-400/30 hover:bg-emerald-400/8">
+      <div className="rounded-3xl border border-emerald-400/15 bg-emerald-400/5 p-4 transition duration-200 hover:border-emerald-400/30 hover:bg-emerald-400/8 flex flex-col h-full justify-between">
           <p className="text-sm font-semibold tracking-wide text-emerald-200">Existing skills</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {existingSkills.length > 0 ? existingSkills.map(skill => <span key={skill} className="rounded-full bg-emerald-400/15 px-3 py-1 text-sm text-emerald-50 transition hover:bg-emerald-400/25">{skill}</span>) : <p className="text-sm text-slate-400">No matched skills yet.</p>}
           </div>
         </div>
 
-        <div className="rounded-3xl border border-rose-400/15 bg-rose-400/5 p-4 transition duration-200 hover:border-rose-400/30 hover:bg-rose-400/8">
+      <div className="rounded-3xl border border-rose-400/15 bg-rose-400/5 p-4 transition duration-200 hover:border-rose-400/30 hover:bg-rose-400/8 flex flex-col h-full justify-between">
           <p className="text-sm font-semibold tracking-wide text-rose-200">Missing skills</p>
           <div className="mt-4 space-y-3">
             {visibleMissingSkills.length > 0 ? visibleMissingSkills.map((skill, index) => (
@@ -36,7 +36,7 @@ export default function SkillGap({
           </div>
         </div>
 
-        <div className="rounded-3xl border border-amber-400/15 bg-amber-400/5 p-4 transition duration-200 hover:border-amber-400/30 hover:bg-amber-400/8">
+      <div className="rounded-3xl border border-amber-400/15 bg-amber-400/5 p-4 transition duration-200 hover:border-amber-400/30 hover:bg-amber-400/8 flex flex-col h-full justify-between">
           <p className="text-sm font-semibold tracking-wide text-amber-200">Priority skills</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {prioritySkills.length > 0 ? prioritySkills.map(skill => <span key={skill} className="rounded-full bg-amber-400/15 px-3 py-1 text-sm text-amber-50 transition hover:bg-amber-400/25">{skill}</span>) : <p className="text-sm text-slate-400">Priority skills will appear here.</p>}

@@ -1,13 +1,25 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { buildMentorInsights } from "../lib/mentorInsights";
 import SectionCard from "./ui/SectionCard";
 import Badge from "./ui/Badge";
 
 export default function AIMentorInsights({ analysis }) {
+	const [mentor, setMentor] = useState(null);
+	const [loadingInsights, setLoadingInsights] = useState(false);
+
+	useEffect(() => {
+		if (!analysis) return;
+		setLoadingInsights(true);
+		buildMentorInsights(analysis)
+			.then(setMentor)
+			.catch(err => console.error("Error building mentor insights:", err))
+			.finally(() => setLoadingInsights(false));
+	}, [analysis]);
+
 	if (!analysis) return null;
 
-	const mentor = buildMentorInsights(analysis);
-
-	// Ensure we have a safe fallback if the mentor insights failed or are missing
 	const paragraphs = mentor?.paragraphs ?? [];
 	const highlight = mentor?.highlight ?? {};
 

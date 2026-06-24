@@ -33,10 +33,10 @@ export default function ProjectRecommendations({ careerGoal = "AI Engineer", pro
 					}
 
 					return (
-						<article
-							key={tierKey}
-							className="rounded-3xl border border-white/10 bg-white/5 p-5 transition duration-200 hover:-translate-y-1 hover:border-cyan-400/20 hover:shadow-[0_18px_40px_rgba(8,145,178,0.12)]"
-						>
+                        <article
+                            key={tierKey}
+                            className="rounded-3xl border border-white/10 bg-white/5 p-5 transition duration-200 hover:-translate-y-1 hover:border-cyan-400/20 hover:shadow-[0_18px_40px_rgba(8,145,178,0.12)] flex flex-col h-full justify-between"
+                        >
 							<div className="flex items-center justify-between gap-3">
 								<Badge tone={config.tone}>{project.difficulty || config.label}</Badge>
 								<span className="text-xs text-slate-400">{project.duration || "TBD"}</span>

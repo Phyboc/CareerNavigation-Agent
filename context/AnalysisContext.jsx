@@ -89,9 +89,9 @@ export function AnalysisProvider({ children }) {
 		}
 	}, []);
 
-	const exportReport = useCallback(() => {
+	const exportReport = useCallback(async () => {
 		if (analysis) {
-			downloadMarkdownReport(analysis);
+			await downloadMarkdownReport(analysis);
 		}
 	}, [analysis]);
 

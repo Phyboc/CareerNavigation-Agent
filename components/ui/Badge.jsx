@@ -1,16 +1,16 @@
 const tones = {
-	emerald: "bg-emerald-400/15 text-emerald-50 border-emerald-400/20",
-	sky: "bg-sky-400/15 text-sky-50 border-sky-400/20",
-	rose: "bg-rose-400/15 text-rose-50 border-rose-400/20",
-	amber: "bg-amber-400/15 text-amber-50 border-amber-400/20",
-	cyan: "bg-cyan-400/15 text-cyan-50 border-cyan-400/20",
-	slate: "bg-slate-950/70 text-slate-200 border-white/10"
+	emerald: "bg-emerald-500/10 text-emerald-300 border-emerald-500/20",
+	sky: "bg-sky-500/10 text-sky-300 border-sky-500/20",
+	rose: "bg-rose-500/10 text-rose-300 border-rose-500/20",
+	amber: "bg-amber-500/10 text-amber-300 border-amber-500/20",
+	cyan: "bg-cyan-500/10 text-cyan-300 border-cyan-500/20",
+	slate: "bg-slate-800/40 text-slate-300 border-white/5"
 };
 
 export default function Badge({ children, tone = "slate", className = "" }) {
 	return (
 		<span
-			className={`inline-flex rounded-full border px-3 py-1 text-sm transition hover:brightness-110 ${tones[tone] || tones.slate} ${className}`}
+			className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium tracking-wide transition hover:brightness-110 ${tones[tone] || tones.slate} ${className}`}
 		>
 			{children}
 		</span>
