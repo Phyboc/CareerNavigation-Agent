@@ -1,6 +1,8 @@
 "use client";
 
 import AIMentorInsights from "../../components/AIMentorInsights";
+import Link from "next/link";
+
 import CareerJourney from "../../components/CareerJourney";
 import CareerMatches from "../../components/CareerMatches";
 import ExportReportButton from "../../components/ExportReportButton";
@@ -10,7 +12,7 @@ import LoadingState from "../../components/ui/LoadingState";
 import { useAnalysis } from "../../context/AnalysisContext";
 
 export default function AnalysisPage() {
-	const { analysis, loading, error } = useAnalysis();
+	const { analysis, loading, error, history } = useAnalysis();
 
 	if (!analysis) {
 		return (
@@ -30,7 +32,15 @@ export default function AnalysisPage() {
 						Readiness score, career matches, skill gaps, and AI mentor insights for {analysis.profile?.name || "your profile"}.
 					</p>
 				</div>
-				<ExportReportButton />
+				<div className="flex flex-wrap items-center gap-3">
+					<ExportReportButton />
+					<Link
+						href="/assessment"
+						className="inline-flex h-11 items-center justify-center rounded-full border border-white/10 bg-white/5 px-5 text-sm font-semibold text-slate-200 transition hover:bg-white/10"
+					>
+						Re-run assessment
+					</Link>
+				</div>
 			</div>
 
 			{loading ? <LoadingState /> : null}
@@ -38,6 +48,33 @@ export default function AnalysisPage() {
 			{error ? (
 				<div className="rounded-[28px] border border-amber-400/20 bg-amber-400/10 px-5 py-4 text-sm text-amber-100">
 					{error}
+				</div>
+			) : null}
+
+			{history.length > 0 ? (
+				<div className="rounded-[28px] border border-white/10 bg-white/5 p-5">
+					<div className="flex flex-wrap items-center justify-between gap-3">
+						<p className="text-xs font-semibold uppercase tracking-[0.32em] text-cyan-300">Progress</p>
+						{history.length > 1 ? (
+							<p className="text-xs text-slate-400">
+								Last assessed: {new Date(history[history.length - 1].savedAt).toLocaleDateString()}
+							</p>
+						) : null}
+					</div>
+					<div className="mt-3 flex flex-wrap gap-2">
+						{[...history].reverse().slice(0, 10).map((entry, index) => (
+							<span
+								key={`${entry.savedAt}-${index}`}
+								className="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-xs font-medium text-cyan-100"
+								title={`${entry.name} · ${entry.goal}`}
+							>
+								{entry.readinessScore}% · {new Date(entry.savedAt).toLocaleDateString()}
+							</span>
+						))}
+					</div>
+					<p className="mt-3 text-xs text-slate-500">
+						Scores are saved locally each time you run an assessment — re-assess after learning to see your progress.
+					</p>
 				</div>
 			) : null}
 

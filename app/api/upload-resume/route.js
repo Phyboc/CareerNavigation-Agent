@@ -1,15 +1,30 @@
 import { analyzeResumeText, getRequiredSkills, mergeResumeAnalysis } from '../../../lib/analyzer';
 import { generateResumeAnalysis } from '../../../lib/aiProvider';
 import { extractResumeSections, dedupeProjects } from '../../../lib/resumeExtractor';
+import { clientIp, rateLimit, tooManyRequests } from '../../../lib/rateLimit';
 
 export const runtime = 'nodejs';
 
+const MAX_FILE_BYTES = 15 * 1024 * 1024; // 15 MB upload cap
+const MAX_TEXT_CHARS = 300 * 1024; // 300 KB of extracted text
+
 export async function POST(request) {
+  // Rate limit: 10 resume uploads per minute per client (each may hit the LLM).
+  const { limited, retryAfter } = rateLimit(`upload:${clientIp(request)}`, 10);
+  if (limited) return tooManyRequests(retryAfter);
+
   try {
     const url = new URL(request.url);
     const career = url.searchParams.get('career') || 'AI Engineer';
 
     const contentType = request.headers.get('content-type') || '';
+    const contentLength = Number(request.headers.get('content-length') || 0);
+    if (contentLength > MAX_FILE_BYTES) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'File is too large (max 15 MB).' }),
+        { status: 413, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
     const buffer = await request.arrayBuffer();
     let text = '';
 
@@ -33,6 +48,9 @@ export async function POST(request) {
         JSON.stringify({ success: false, error: 'No readable text found in the uploaded file.' }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
+    }
+    if (text.length > MAX_TEXT_CHARS) {
+      text = text.slice(0, MAX_TEXT_CHARS);
     }
 
     // Deterministic keyword analysis is the source of truth for scoring. The AI

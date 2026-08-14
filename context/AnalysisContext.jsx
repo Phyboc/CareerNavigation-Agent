@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useSyncExternalStore, useState, useCallback } from "react";
+import { createContext, useContext, useSyncExternalStore, useEffect, useState, useCallback } from "react";
 
 import { buildAnalysis } from "../lib/analyzer";
 import { sampleProfile } from "../lib/sampleProfile";
@@ -8,6 +8,8 @@ import { downloadMarkdownReport } from "../lib/exportReport";
 import { fetchJson } from "../lib/apiClient";
 
 const STORAGE_KEY = "careercompass-analysis";
+const HISTORY_KEY = "careercompass-history";
+const MAX_HISTORY = 20;
 
 const AnalysisContext = createContext(null);
 
@@ -25,7 +27,9 @@ function readStoredAnalysis() {
 		return defaultAnalysis;
 	}
 	try {
-		const stored = sessionStorage.getItem(STORAGE_KEY);
+		// localStorage persists across sessions; sessionStorage is read as a
+		// fallback for tabs opened before this change.
+		const stored = localStorage.getItem(STORAGE_KEY) || sessionStorage.getItem(STORAGE_KEY);
 		if (stored) {
 			return JSON.parse(stored);
 		}
@@ -33,6 +37,19 @@ function readStoredAnalysis() {
 		// fall through
 	}
 	return defaultAnalysis;
+}
+
+function readHistory() {
+	if (typeof window === "undefined") {
+		return [];
+	}
+	try {
+		const stored = localStorage.getItem(HISTORY_KEY);
+		const parsed = stored ? JSON.parse(stored) : [];
+		return Array.isArray(parsed) ? parsed : [];
+	} catch {
+		return [];
+	}
 }
 
 function subscribe(listener) {
@@ -54,9 +71,9 @@ function getServerSnapshot() {
 function setAnalysisCache(next) {
 	analysisCache = next;
 	try {
-		sessionStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+		localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
 	} catch {
-		// sessionStorage may be unavailable
+		// storage may be unavailable
 	}
 	emitChange();
 }
@@ -65,6 +82,27 @@ export function AnalysisProvider({ children }) {
 	const analysis = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState("");
+	// Readiness snapshots over time – lets users track progress across sessions.
+	const [history, setHistory] = useState(readHistory);
+
+	useEffect(() => {
+		if (!analysis || analysis === defaultAnalysis) return;
+		const entry = {
+			savedAt: Date.now(),
+			name: analysis.profile?.name || "Student",
+			goal: analysis.profile?.goal || "",
+			readinessScore: analysis.readiness?.score ?? 0
+		};
+		setHistory(previous => {
+			const next = [...previous, entry].slice(-MAX_HISTORY);
+			try {
+				localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
+			} catch {
+				// storage may be unavailable
+			}
+			return next;
+		});
+	}, [analysis]);
 
 	const handleAnalyze = useCallback(async (formData) => {
 		setLoading(true);
@@ -114,7 +152,7 @@ export function AnalysisProvider({ children }) {
 	}, [analysis]);
 
 	return (
-		<AnalysisContext.Provider value={{ analysis, loading, error, handleAnalyze, exportReport, hydrated: true }}>
+		<AnalysisContext.Provider value={{ analysis, loading, error, handleAnalyze, exportReport, history, hydrated: true }}>
 			{children}
 		</AnalysisContext.Provider>
 	);

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { buildMentorInsights } from "../../../lib/mentorInsights";
 import { buildStaticMentorInsights } from "../../../lib/mentorInsightsStatic";
+import { clientIp, rateLimit, tooManyRequests } from "../../../lib/rateLimit";
 
 export const runtime = "nodejs";
 
@@ -10,6 +11,10 @@ export const runtime = "nodejs";
 // the deterministic static builder is the guaranteed fallback, so the client
 // never has to handle an error response for mentor insights.
 export async function POST(request) {
+	// Rate limit: 20 mentor-insight generations per minute per client.
+	const { limited, retryAfter } = rateLimit(`mentor:${clientIp(request)}`, 20);
+	if (limited) return tooManyRequests(retryAfter);
+
 	let body = {};
 	try {
 		body = await request.json();

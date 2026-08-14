@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
 
 import { callLLM } from "../../../lib/aiProvider";
+import { clientIp, rateLimit, tooManyRequests } from "../../../lib/rateLimit";
 
 export const runtime = "nodejs";
+
+const MAX_BODY_BYTES = 512 * 1024; // 512 KB – chat history + analysis summary
 
 // Compact, grounded summary of the user's analysis used to personalize replies.
 function summarizeAnalysis(analysis = {}) {
@@ -48,6 +51,15 @@ Guidelines:
 // Conversational endpoint. Accepts the message history (plus the analysis used
 // for grounding) and returns the mentor's reply as plain text.
 export async function POST(request) {
+	// Rate limit: 20 chat messages per minute per client (an LLM call each).
+	const { limited, retryAfter } = rateLimit(`chat:${clientIp(request)}`, 20);
+	if (limited) return tooManyRequests(retryAfter);
+
+	const contentLength = Number(request.headers.get("content-length") || 0);
+	if (contentLength > MAX_BODY_BYTES) {
+		return NextResponse.json({ success: false, error: "Payload too large." }, { status: 413 });
+	}
+
 	try {
 		const body = await request.json();
 		const messages = Array.isArray(body?.messages) ? body.messages.slice(-10) : [];
