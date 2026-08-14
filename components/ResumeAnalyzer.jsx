@@ -171,10 +171,10 @@ export default function ResumeAnalyzer({ targetCareer = "AI Engineer" }) {
 			title="Analyze your resume"
 			description="Detect strengths, missing skills, recommendations, and career fit for your target role."
 		>
-			<div className="mt-6 flex flex-col gap-4 border-b border-white/10 pb-5 lg:flex-row lg:items-end lg:justify-between">
-				<p className="text-sm text-slate-400">Target career: <span className="font-semibold text-cyan-200">{targetCareer}</span></p>
+			<div className="mt-6 flex flex-col gap-4 border-b border-slate-700/20 pb-5 lg:flex-row lg:items-end lg:justify-between">
+				<p className="text-sm text-slate-400">Target career: <span className="font-semibold text-cyan-700">{targetCareer}</span></p>
 				<div className="flex flex-wrap items-center gap-3">
-					<button type="button" onClick={loadSample} disabled={isAnalyzing} className="inline-flex h-11 items-center justify-center rounded-full border border-cyan-400/25 bg-cyan-400/10 px-4 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-400/20 disabled:opacity-60">
+					<button type="button" onClick={loadSample} disabled={isAnalyzing} className="inline-flex h-11 items-center justify-center rounded-full border border-cyan-600/30 bg-cyan-600/10 px-4 text-sm font-semibold text-cyan-800 transition hover:bg-cyan-600/20 disabled:opacity-60">
 						Load sample resume
 					</button>
 					<input
@@ -187,7 +187,7 @@ export default function ResumeAnalyzer({ targetCareer = "AI Engineer" }) {
 					/>
 					<label
 						htmlFor="resume-file-input"
-						className="inline-flex h-11 cursor-pointer items-center justify-center rounded-full border border-cyan-400/25 bg-cyan-400/10 px-4 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-400/20 disabled:opacity-60"
+						className="inline-flex h-11 cursor-pointer items-center justify-center rounded-full border border-cyan-600/30 bg-cyan-600/10 px-4 text-sm font-semibold text-cyan-800 transition hover:bg-cyan-600/20 disabled:opacity-60"
 					>
 						{uploading ? "Processing file…" : "Upload PDF or TXT"}
 					</label>
@@ -195,7 +195,7 @@ export default function ResumeAnalyzer({ targetCareer = "AI Engineer" }) {
 			</div>
 
 			{error ? (
-				<div className="mt-5 rounded-2xl border border-amber-400/20 bg-amber-400/10 px-4 py-3 text-sm text-amber-100">
+				<div className="mt-5 rounded-2xl border border-amber-600/25 bg-amber-600/10 px-4 py-3 text-sm text-amber-800">
 					{error}
 				</div>
 			) : null}
@@ -207,13 +207,13 @@ export default function ResumeAnalyzer({ targetCareer = "AI Engineer" }) {
 						onChange={(event) => setResumeText(event.target.value)}
 						rows={12}
 						placeholder="Paste resume text here or upload a PDF…"
-						className="w-full rounded-[28px] border border-white/10 bg-slate-950/80 px-4 py-4 text-sm leading-7 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-cyan-400/50"
+						className="w-full rounded-[28px] border border-slate-700/25 bg-white px-4 py-4 text-sm leading-7 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-cyan-600/60"
 					/>
 					<button
 						type="button"
 						onClick={handleAnalyze}
 						disabled={isAnalyzing}
-						className="inline-flex h-11 items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-cyan-600 px-5 text-sm font-semibold text-slate-950 transition hover:brightness-110 disabled:opacity-70"
+						className="inline-flex h-11 items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 to-cyan-700 px-5 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-70"
 					>
 						{isAnalyzing ? "Analyzing…" : "Analyze with AI"}
 					</button>
@@ -224,17 +224,17 @@ export default function ResumeAnalyzer({ targetCareer = "AI Engineer" }) {
 
 				<div className="space-y-4">
 					{analysis ? (
-						<div className="rounded-3xl border border-cyan-400/20 bg-cyan-400/10 p-4 text-center">
+						<div className="rounded-3xl border border-cyan-600/20 bg-cyan-600/5 p-4 text-center">
 							<p className="text-xs font-medium tracking-wide text-slate-400">Career fit</p>
 							<Badge tone={fitTones[analysis.careerFit] || "slate"} className="mt-2 text-base">
 								{analysis.careerFit}
 							</Badge>
-							<p className="mt-2 text-2xl font-bold text-white">{analysis.matchScore}%</p>
+							<p className="mt-2 text-2xl font-bold text-slate-100">{analysis.matchScore}%</p>
 							<p className="text-xs text-slate-400">skill alignment</p>
 							<ProgressBar value={analysis.matchScore} className="mt-3" animated={isAnalyzing} />
 						</div>
 					) : (
-						<div className="rounded-3xl border border-dashed border-white/10 bg-white/5 p-6 text-center text-sm text-slate-400">
+						<div className="rounded-3xl border border-dashed border-slate-700/30 bg-white/60 p-6 text-center text-sm text-slate-500">
 							{isAnalyzing ? "Analyzing your resume…" : "Results will appear here after analysis."}
 						</div>
 					)}
@@ -243,8 +243,8 @@ export default function ResumeAnalyzer({ targetCareer = "AI Engineer" }) {
 
 			{analysis ? (
 				<div className="mt-6 grid gap-4 md:grid-cols-2">
-					<div className="rounded-3xl border border-emerald-400/15 bg-emerald-400/5 p-4">
-						<p className="text-sm font-semibold text-emerald-200">Strengths</p>
+					<div className="rounded-3xl border border-emerald-600/20 bg-emerald-600/5 p-4">
+						<p className="text-sm font-semibold text-emerald-700">Strengths</p>
 						<div className="mt-3 flex flex-wrap gap-2">
 							{strengths.length > 0 ? strengths.map(item => (
 								<Badge key={item} tone="emerald">{item}</Badge>
@@ -254,8 +254,8 @@ export default function ResumeAnalyzer({ targetCareer = "AI Engineer" }) {
 						</div>
 					</div>
 
-					<div className="rounded-3xl border border-rose-400/15 bg-rose-400/5 p-4">
-						<p className="text-sm font-semibold text-rose-200">Missing Skills</p>
+					<div className="rounded-3xl border border-rose-600/20 bg-rose-600/5 p-4">
+						<p className="text-sm font-semibold text-rose-700">Missing Skills</p>
 						<div className="mt-3 flex flex-wrap gap-2">
 							{missingSkills.length > 0 ? missingSkills.map(item => (
 								<Badge key={item} tone="rose">{item}</Badge>
@@ -265,8 +265,8 @@ export default function ResumeAnalyzer({ targetCareer = "AI Engineer" }) {
 						</div>
 					</div>
 
-					<div className="rounded-3xl border border-sky-400/15 bg-sky-400/5 p-4">
-						<p className="text-sm font-semibold text-sky-200">Detected Skills</p>
+					<div className="rounded-3xl border border-sky-600/20 bg-sky-600/5 p-4">
+						<p className="text-sm font-semibold text-sky-700">Detected Skills</p>
 						<div className="mt-3 flex flex-wrap gap-2">
 							{detectedSkills.length > 0 ? detectedSkills.map(item => (
 								<Badge key={item} tone="sky">{item}</Badge>
@@ -276,9 +276,9 @@ export default function ResumeAnalyzer({ targetCareer = "AI Engineer" }) {
 						</div>
 					</div>
 
-					<div className="rounded-3xl border border-amber-400/15 bg-amber-400/5 p-4">
-						<p className="text-sm font-semibold text-amber-200">Recommendations</p>
-						<ul className="mt-3 space-y-2 text-sm leading-6 text-slate-200">
+					<div className="rounded-3xl border border-amber-600/20 bg-amber-600/5 p-4">
+						<p className="text-sm font-semibold text-amber-700">Recommendations</p>
+						<ul className="mt-3 space-y-2 text-sm leading-6 text-slate-300">
 							{suggestions.length > 0 ? suggestions.map(item => (
 								<li key={item}>• {item}</li>
 							)) : (
@@ -292,7 +292,7 @@ export default function ResumeAnalyzer({ targetCareer = "AI Engineer" }) {
 			{analysis && extractedSections ? (
 				<div className="mt-6 grid gap-4 md:grid-cols-3">
 					{projectsList.length ? (
-						<div className="rounded-3xl border border-white/10 bg-white/5 p-4">
+						<div className="rounded-3xl border border-slate-700/20 bg-white/80 p-4">
 							<p className="text-sm font-semibold text-slate-200">Projects</p>
 							<div className="mt-3 flex flex-wrap gap-2">
 								{projectsList.map(project => (
@@ -302,9 +302,9 @@ export default function ResumeAnalyzer({ targetCareer = "AI Engineer" }) {
 						</div>
 					) : null}
 					{analysis.education?.length ? (
-						<div className="rounded-3xl border border-white/10 bg-white/5 p-4">
+						<div className="rounded-3xl border border-slate-700/20 bg-white/80 p-4">
 							<p className="text-sm font-semibold text-slate-200">Education</p>
-							<ul className="mt-3 space-y-1.5 text-sm leading-6 text-slate-300">
+							<ul className="mt-3 space-y-1.5 text-sm leading-6 text-slate-400">
 								{analysis.education.map((item, index) => {
 									const text = toDisplayString(item);
 									return <li key={`${index}-${text}`}>{text}</li>;
@@ -313,9 +313,9 @@ export default function ResumeAnalyzer({ targetCareer = "AI Engineer" }) {
 						</div>
 					) : null}
 					{analysis.certifications?.length ? (
-						<div className="rounded-3xl border border-white/10 bg-white/5 p-4">
+						<div className="rounded-3xl border border-slate-700/20 bg-white/80 p-4">
 							<p className="text-sm font-semibold text-slate-200">Certifications</p>
-							<ul className="mt-3 space-y-1.5 text-sm leading-6 text-slate-300">
+							<ul className="mt-3 space-y-1.5 text-sm leading-6 text-slate-400">
 								{analysis.certifications.map((item, index) => {
 									const text = toDisplayString(item);
 									return <li key={`${index}-${text}`}>{text}</li>;
@@ -327,22 +327,22 @@ export default function ResumeAnalyzer({ targetCareer = "AI Engineer" }) {
 			) : null}
 
 			{analysis && projectsList.length > 0 ? (
-				<div className="mt-6 rounded-3xl border border-white/10 bg-white/5 p-4">
+				<div className="mt-6 rounded-3xl border border-slate-700/20 bg-white/80 p-4">
 					<p className="text-sm font-semibold text-slate-200">Project insights</p>
 					<p className="mt-1 text-xs leading-5 text-slate-400">Descriptions feed your analysis — strong ones state what you built and the measurable outcome.</p>
 					<div className="mt-3 space-y-3">
 						{projectsList.map(project => (
-							<div key={project.title} className="rounded-2xl border border-white/10 bg-slate-950/60 p-3">
+							<div key={project.title} className="rounded-2xl border border-slate-700/20 bg-slate-900/50 p-3">
 								<div className="flex flex-wrap items-center justify-between gap-2">
-									<p className="text-sm font-semibold text-white">{project.title}</p>
+									<p className="text-sm font-semibold text-slate-100">{project.title}</p>
 									{project.description && !hasImpactMetrics(project.description) ? (
 										<Badge tone="rose">Add impact metrics</Badge>
 									) : null}
 								</div>
 								{project.description ? (
-									<p className="mt-1.5 text-sm leading-6 text-slate-300">{project.description}</p>
+									<p className="mt-1.5 text-sm leading-6 text-slate-400">{project.description}</p>
 								) : (
-									<p className="mt-1.5 text-sm text-amber-200/80">Add a one-line description of what you built and the outcome.</p>
+									<p className="mt-1.5 text-sm text-amber-700/90">Add a one-line description of what you built and the outcome.</p>
 								)}
 							</div>
 						))}

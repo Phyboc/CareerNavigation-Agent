@@ -22,8 +22,8 @@ export default function RoadmapPage() {
 		<div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
 			<div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
 				<div>
-					<p className="text-xs font-medium tracking-wide text-cyan-200">Roadmap</p>
-					<h1 className="mt-2 text-3xl font-semibold text-white sm:text-4xl">Your Learning Roadmap</h1>
+					<p className="text-xs font-medium tracking-wide text-cyan-700">Roadmap</p>
+					<h1 className="mt-2 text-3xl font-semibold text-slate-100 sm:text-4xl">Your Learning Roadmap</h1>
 					<p className="mt-3 max-w-2xl text-sm leading-7 text-slate-400">
 						A structured plan and weekly schedule to reach your goal as a {analysis.profile?.goal}.
 					</p>

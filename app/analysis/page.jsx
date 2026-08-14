@@ -26,8 +26,8 @@ export default function AnalysisPage() {
 		<div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
 			<div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
 				<div>
-					<p className="text-xs font-medium tracking-wide text-cyan-200">Analysis</p>
-					<h1 className="mt-2 text-3xl font-semibold text-white sm:text-4xl">Your Career Analysis</h1>
+					<p className="text-xs font-medium tracking-wide text-cyan-700">Analysis</p>
+					<h1 className="mt-2 text-3xl font-semibold text-slate-100 sm:text-4xl">Your Career Analysis</h1>
 					<p className="mt-3 max-w-2xl text-sm leading-7 text-slate-400">
 						Readiness score, career matches, skill gaps, and AI mentor insights for {analysis.profile?.name || "your profile"}.
 					</p>
@@ -36,7 +36,7 @@ export default function AnalysisPage() {
 					<ExportReportButton />
 					<Link
 						href="/assessment"
-						className="inline-flex h-11 items-center justify-center rounded-full border border-white/10 bg-white/5 px-5 text-sm font-semibold text-slate-200 transition hover:bg-white/10"
+						className="inline-flex h-11 items-center justify-center rounded-full border border-slate-700/25 bg-white px-5 text-sm font-semibold text-slate-200 transition hover:bg-slate-900"
 					>
 						Re-run assessment
 					</Link>
@@ -46,15 +46,15 @@ export default function AnalysisPage() {
 			{loading ? <LoadingState /> : null}
 
 			{error ? (
-				<div className="rounded-[28px] border border-amber-400/20 bg-amber-400/10 px-5 py-4 text-sm text-amber-100">
+				<div className="rounded-[28px] border border-amber-600/25 bg-amber-500/10 px-5 py-4 text-sm text-amber-800">
 					{error}
 				</div>
 			) : null}
 
 			{history.length > 0 ? (
-				<div className="rounded-[28px] border border-white/10 bg-white/5 p-5">
+				<div className="rounded-[28px] border border-slate-700/25 bg-white/80 p-5">
 					<div className="flex flex-wrap items-center justify-between gap-3">
-						<p className="text-xs font-medium tracking-wide text-cyan-200">Progress</p>
+						<p className="text-xs font-medium tracking-wide text-cyan-700">Progress</p>
 						{history.length > 1 ? (
 							<p className="text-xs text-slate-400">
 								Last assessed: {new Date(history[history.length - 1].savedAt).toLocaleDateString()}
@@ -65,7 +65,7 @@ export default function AnalysisPage() {
 						{[...history].reverse().slice(0, 10).map((entry, index) => (
 							<span
 								key={`${entry.savedAt}-${index}`}
-								className="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-xs font-medium text-cyan-100"
+								className="rounded-full border border-cyan-600/25 bg-cyan-600/10 px-3 py-1 text-xs font-medium text-cyan-800"
 								title={`${entry.name} · ${entry.goal}`}
 							>
 								{entry.readinessScore}% · {new Date(entry.savedAt).toLocaleDateString()}

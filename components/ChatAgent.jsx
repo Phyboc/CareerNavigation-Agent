@@ -85,7 +85,7 @@ export default function ChatAgent() {
 			title="Conversation with your mentor"
 			description="Ask anything about your career path — replies are grounded in your profile and analysis."
 		>
-			<div className="mt-6 flex h-[420px] flex-col overflow-hidden rounded-[28px] border border-white/10 bg-slate-950/60">
+			<div className="mt-6 flex h-[420px] flex-col overflow-hidden rounded-[28px] border border-slate-700/20 bg-white/80">
 				<div className="flex-1 space-y-4 overflow-y-auto p-5">
 					{messages.map((message, index) => {
 						const isUser = message.role === "user";
@@ -94,8 +94,8 @@ export default function ChatAgent() {
 								<div
 									className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-6 whitespace-pre-wrap ${
 										isUser
-											? "rounded-br-md bg-gradient-to-r from-cyan-400 to-cyan-600 text-slate-950"
-											: "rounded-bl-md border border-white/10 bg-white/5 text-slate-200"
+										? "rounded-br-md bg-gradient-to-r from-cyan-500 to-cyan-700 text-white"
+										: "rounded-bl-md border border-slate-700/20 bg-slate-900/50 text-slate-300"
 									}`}
 								>
 									{message.content}
@@ -105,10 +105,10 @@ export default function ChatAgent() {
 					})}
 					{sending ? (
 						<div className="flex justify-start">
-							<div className="flex items-center gap-2 rounded-2xl rounded-bl-md border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-400">
-								<span className="h-2 w-2 animate-pulse rounded-full bg-cyan-400" />
-								<span className="h-2 w-2 animate-pulse rounded-full bg-cyan-400 [animation-delay:150ms]" />
-								<span className="h-2 w-2 animate-pulse rounded-full bg-cyan-400 [animation-delay:300ms]" />
+							<div className="flex items-center gap-2 rounded-2xl rounded-bl-md border border-slate-700/20 bg-slate-900/50 px-4 py-3 text-sm text-slate-500">
+								<span className="h-2 w-2 animate-pulse rounded-full bg-cyan-600" />
+								<span className="h-2 w-2 animate-pulse rounded-full bg-cyan-600 [animation-delay:150ms]" />
+								<span className="h-2 w-2 animate-pulse rounded-full bg-cyan-600 [animation-delay:300ms]" />
 								<span className="ml-1">Thinking…</span>
 							</div>
 						</div>
@@ -117,12 +117,12 @@ export default function ChatAgent() {
 				</div>
 
 				{error ? (
-					<div className="border-t border-white/10 px-5 py-2.5 text-sm text-rose-200 bg-rose-400/10">
+					<div className="border-t border-rose-600/20 px-5 py-2.5 text-sm text-rose-800 bg-rose-600/10">
 						{error}
 					</div>
 				) : null}
 
-				<div className="flex items-end gap-3 border-t border-white/10 p-4">
+				<div className="flex items-end gap-3 border-t border-slate-700/20 p-4">
 					<textarea
 						value={input}
 						onChange={(event) => setInput(event.target.value)}
@@ -134,20 +134,20 @@ export default function ChatAgent() {
 						}}
 						rows={2}
 						placeholder="Ask your mentor anything…"
-						className="flex-1 resize-none rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm leading-6 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-cyan-400/50 focus:bg-white/10"
+						className="flex-1 resize-none rounded-2xl border border-slate-700/25 bg-white px-4 py-3 text-sm leading-6 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-cyan-600/60 focus:bg-white"
 					/>
 					<button
 						type="button"
 						onClick={handleSend}
 						disabled={sending || !input.trim()}
-						className="inline-flex h-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-cyan-600 px-5 text-sm font-semibold text-slate-950 transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+						className="inline-flex h-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 to-cyan-700 px-5 text-sm font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
 					>
 						{sending ? "Sending…" : "Send"}
 					</button>
 					<button
 						type="button"
 						onClick={clearConversation}
-						className="inline-flex h-11 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5 px-4 text-sm font-medium text-slate-300 transition hover:bg-white/10"
+						className="inline-flex h-11 shrink-0 items-center justify-center rounded-full border border-slate-700/25 bg-white px-4 text-sm font-medium text-slate-300 transition hover:bg-slate-900"
 						title="Clear conversation"
 					>
 						Clear

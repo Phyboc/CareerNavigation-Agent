@@ -56,15 +56,15 @@ export default function AIMentorInsights({ analysis }) {
 			title="Your personal career mentor"
 			description="Natural language guidance generated from your profile, skills, and career matches."
 		>
-			<div className="mt-6 rounded-[28px] border border-cyan-400/20 bg-gradient-to-br from-cyan-400/10 via-cyan-500/5 to-transparent p-6">
+			<div className="mt-6 rounded-[28px] border border-cyan-600/20 bg-gradient-to-br from-cyan-600/10 via-cyan-600/5 to-transparent p-6">
 				<div className="flex items-start gap-4">
-					<div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-cyan-600 text-lg font-bold text-slate-950">
+					<div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500 to-cyan-700 text-lg font-bold text-white">
 						AI
 					</div>
 					<div className="space-y-4">
 						{paragraphs.length > 0 ? (
 							paragraphs.map((paragraph, index) => (
-								<p key={index} className="text-sm leading-7 text-slate-200 animate-fade-in">
+								<p key={index} className="text-sm leading-7 text-slate-300 animate-fade-in">
 									{paragraph}
 								</p>
 							))

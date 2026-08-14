@@ -10,8 +10,8 @@ export default function ResumePage() {
 	return (
 		<div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
 			<div>
-				<p className="text-xs font-medium tracking-wide text-cyan-200">Resume analyzer</p>
-				<h1 className="mt-2 text-3xl font-semibold text-white sm:text-4xl">Analyze Your Resume</h1>
+				<p className="text-xs font-medium tracking-wide text-cyan-700">Resume analyzer</p>
+				<h1 className="mt-2 text-3xl font-semibold text-slate-100 sm:text-4xl">Analyze Your Resume</h1>
 				<p className="mt-3 max-w-2xl text-sm leading-7 text-slate-400">
 					Upload a PDF or paste your resume text to detect strengths, missing skills, and career fit for your target role.
 				</p>

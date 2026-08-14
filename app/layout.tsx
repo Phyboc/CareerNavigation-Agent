@@ -46,7 +46,7 @@ export default function RootLayout({
 			<body className="flex min-h-full flex-col bg-slate-950 text-slate-100">
 				<a
 					href="#main"
-					className="fixed left-4 top-4 z-50 -translate-y-16 rounded-full border border-cyan-400/30 bg-slate-950 px-4 py-2 text-sm font-semibold text-cyan-200 transition focus:translate-y-0"
+					className="fixed left-4 top-4 z-50 -translate-y-16 rounded-full border border-cyan-600/30 bg-white px-4 py-2 text-sm font-semibold text-cyan-800 shadow-lg transition focus:translate-y-0"
 				>
 					Skip to content
 				</a>

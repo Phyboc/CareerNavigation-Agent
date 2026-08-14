@@ -23,22 +23,22 @@ export default function Testimonials() {
 	return (
 		<section className="py-6">
 			<div className="text-center">
-				<p className="text-sm font-medium tracking-wide text-cyan-200">Student stories</p>
-				<h2 className="mt-3 font-display text-3xl font-bold text-white sm:text-4xl">What students say</h2>
+				<p className="text-sm font-medium tracking-wide text-cyan-700">Student stories</p>
+				<h2 className="mt-3 font-display text-3xl font-bold text-slate-100 sm:text-4xl">What students say</h2>
 			</div>
 			<div className="mt-10 grid gap-6 md:grid-cols-3">
 				{testimonials.map(item => (
 					<blockquote
 						key={item.name}
-						className="rounded-3xl border border-white/5 bg-slate-900/20 p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 hover:border-cyan-500/20 hover:bg-slate-900/35 hover:shadow-[0_15px_30px_rgba(6,182,212,0.06)]"
+						className="rounded-3xl border border-slate-700/20 bg-white/80 p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 hover:border-cyan-600/30 hover:bg-white hover:shadow-[0_15px_30px_rgba(15,118,110,0.08)]"
 					>
 						<p className="text-sm leading-relaxed text-slate-300 italic">&ldquo;{item.quote}&rdquo;</p>
-						<footer className="mt-6 border-t border-white/5 pt-4 flex items-center gap-3">
-							<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-cyan-600 font-display text-sm font-bold text-slate-950">
+						<footer className="mt-6 border-t border-slate-700/15 pt-4 flex items-center gap-3">
+							<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-cyan-700 font-display text-sm font-bold text-white">
 								{item.initials}
 							</div>
 							<div>
-								<p className="text-sm font-bold text-white leading-tight">{item.name}</p>
+								<p className="text-sm font-bold text-slate-100 leading-tight">{item.name}</p>
 								<p className="text-xs text-slate-500 leading-tight mt-0.5">{item.role}</p>
 							</div>
 						</footer>

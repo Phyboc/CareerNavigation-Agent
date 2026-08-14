@@ -2,10 +2,10 @@ import Link from "next/link";
 
 const variants = {
 	primary:
-		"bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 text-slate-950 shadow-[0_4px_20px_rgba(6,182,212,0.25)] hover:brightness-110 active:scale-[0.98] active:translate-y-[0.5px]",
+		"bg-gradient-to-r from-cyan-500 to-cyan-700 text-white shadow-[0_4px_20px_rgba(15,118,110,0.25)] hover:brightness-110 active:scale-[0.98] active:translate-y-[0.5px]",
 	secondary:
-		"border border-cyan-500/30 bg-cyan-500/10 text-cyan-100 hover:bg-cyan-500/25 hover:border-cyan-500/50 active:scale-[0.98] active:translate-y-[0.5px]",
-	ghost: "border border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 active:scale-[0.98] active:translate-y-[0.5px]"
+		"border border-cyan-600/30 bg-cyan-600/10 text-cyan-800 hover:bg-cyan-600/20 hover:border-cyan-600/50 active:scale-[0.98] active:translate-y-[0.5px]",
+	ghost: "border border-slate-800 bg-white text-slate-200 hover:bg-slate-900 hover:border-slate-700 active:scale-[0.98] active:translate-y-[0.5px]"
 };
 
 export default function Button({ children, variant = "primary", className = "", href, ...props }) {

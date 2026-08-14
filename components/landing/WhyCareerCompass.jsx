@@ -14,14 +14,14 @@ const solutions = [
 
 export default function WhyCareerCompass() {
 	return (
-		<section id="why" className="scroll-mt-24 glass-panel rounded-[32px] p-6 sm:p-10 transition duration-300 hover:border-cyan-500/20">
+		<section id="why" className="scroll-mt-24 glass-panel rounded-[32px] p-6 sm:p-10 transition duration-300 hover:border-cyan-600/25">
 			<div className="text-center">
-				<p className="text-sm font-medium tracking-wide text-cyan-200">Why CareerCompass AI?</p>
-				<h2 className="mt-3 font-display text-3xl font-bold text-white sm:text-4xl">Built for students who want direction</h2>
+				<p className="text-sm font-medium tracking-wide text-cyan-700">Why CareerCompass AI?</p>
+				<h2 className="mt-3 font-display text-3xl font-bold text-slate-100 sm:text-4xl">Built for students who want direction</h2>
 			</div>
 			<div className="mt-10 grid gap-6 lg:grid-cols-2">
-				<div className="rounded-3xl border border-rose-500/10 bg-rose-500/5 p-6 sm:p-8 hover:border-rose-500/25 transition duration-300">
-					<h3 className="font-display text-lg font-bold text-rose-300">Students often struggle to</h3>
+				<div className="rounded-3xl border border-rose-600/15 bg-rose-600/5 p-6 sm:p-8 hover:border-rose-600/30 transition duration-300">
+					<h3 className="font-display text-lg font-bold text-rose-700">Students often struggle to</h3>
 					<ul className="mt-6 space-y-4">
 						{problems.map((item, idx) => (
 							<li key={idx} className="flex items-start gap-3.5 text-sm leading-relaxed text-slate-300">
@@ -35,8 +35,8 @@ export default function WhyCareerCompass() {
 						))}
 					</ul>
 				</div>
-				<div className="rounded-3xl border border-emerald-500/10 bg-emerald-500/5 p-6 sm:p-8 hover:border-emerald-500/25 transition duration-300">
-					<h3 className="font-display text-lg font-bold text-emerald-300">CareerCompass AI solves this through</h3>
+				<div className="rounded-3xl border border-emerald-600/15 bg-emerald-600/5 p-6 sm:p-8 hover:border-emerald-600/30 transition duration-300">
+					<h3 className="font-display text-lg font-bold text-emerald-700">CareerCompass AI solves this through</h3>
 					<ul className="mt-6 space-y-4">
 						{solutions.map((item, idx) => (
 							<li key={idx} className="flex items-start gap-3.5 text-sm leading-relaxed text-slate-300">

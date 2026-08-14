@@ -2,9 +2,9 @@ import Badge from "./ui/Badge";
 import SectionCard from "./ui/SectionCard";
 
 const tierConfig = {
-	beginner: { tone: "emerald", label: "Beginner", labelClass: "text-emerald-200" },
-	intermediate: { tone: "sky", label: "Intermediate", labelClass: "text-sky-200" },
-	advanced: { tone: "amber", label: "Advanced", labelClass: "text-amber-200" }
+	beginner: { tone: "emerald", label: "Beginner", labelClass: "text-emerald-700" },
+	intermediate: { tone: "sky", label: "Intermediate", labelClass: "text-sky-700" },
+	advanced: { tone: "amber", label: "Advanced", labelClass: "text-amber-700" }
 };
 
 export default function ProjectRecommendations({ careerGoal = "AI Engineer", projects = {} }) {
@@ -27,7 +27,7 @@ export default function ProjectRecommendations({ careerGoal = "AI Engineer", pro
 
 					if (!project) {
 						return (
-							<article key={tierKey} className={`rounded-3xl border border-dashed border-white/10 bg-white/5 p-5 text-sm text-slate-400 ${span}`}>
+							<article key={tierKey} className={`rounded-3xl border border-dashed border-slate-700/30 bg-white/60 p-5 text-sm text-slate-500 ${span}`}>
 								<p className={`text-xs font-semibold tracking-wide ${config.labelClass}`}>{config.label}</p>
 								<p className="mt-3">No {config.label.toLowerCase()} project available.</p>
 							</article>
@@ -37,15 +37,15 @@ export default function ProjectRecommendations({ careerGoal = "AI Engineer", pro
 					return (
                         <article
                             key={tierKey}
-                            className={`rounded-3xl border border-white/10 bg-white/5 p-5 transition duration-200 hover:border-cyan-400/20 hover:shadow-[0_18px_40px_rgba(8,145,178,0.12)] flex flex-col h-full justify-between ${span}`}
+                            className={`rounded-3xl border border-slate-700/20 bg-white/80 p-5 transition duration-200 hover:border-cyan-600/30 hover:shadow-[0_18px_40px_rgba(15,118,110,0.1)] flex flex-col h-full justify-between ${span}`}
                         >
 							<div className="flex items-center justify-between gap-3">
 								<Badge tone={config.tone}>{project.difficulty || config.label}</Badge>
 								<span className="text-xs text-slate-400">{project.duration || "TBD"}</span>
 							</div>
 
-							<h4 className="mt-4 text-lg font-semibold text-white">{project.title}</h4>
-							<p className="mt-2 text-sm leading-6 text-slate-300">{project.description}</p>
+							<h4 className="mt-4 text-lg font-semibold text-slate-100">{project.title}</h4>
+							<p className="mt-2 text-sm leading-6 text-slate-400">{project.description}</p>
 
 							<div className="mt-4">
 								<p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Skills learned</p>

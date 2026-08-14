@@ -1,8 +1,8 @@
 export default function LoadingState({ message = "Analyzing your profile..." }) {
 	return (
 		<div className="space-y-4">
-			<p className="text-xs font-medium tracking-wide text-cyan-200/80">{message}</p>
-			<div className="rounded-[28px] border border-white/10 bg-white/5 p-6 backdrop-blur">
+			<p className="text-xs font-medium tracking-wide text-cyan-700">{message}</p>
+			<div className="rounded-[28px] border border-slate-700/25 bg-white/80 p-6 backdrop-blur">
 				<div className="flex items-center justify-between gap-4">
 					<div className="skeleton h-8 w-48 rounded-full" />
 					<div className="skeleton h-8 w-20 rounded-full" />

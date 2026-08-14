@@ -1,13 +1,15 @@
 @import "tailwindcss";
 
+/* Light editorial theme — warm cream surfaces, dark ink text, deep teal accent.
+   The slate scale is remapped so dark-mode utilities (slate-950 backgrounds,
+   slate-100 text, etc.) resolve to light equivalents in one place. */
 :root {
-	/* Deep navy instead of flat near-black – the whole UI reads warmer. */
-	--background: #06101e;
-	--foreground: #f3f4f6;
-	--brand-primary: #06b6d4;
-	--brand-accent: #0891b2;
-	--surface-bg: rgba(15, 27, 45, 0.55);
-	--border-color: rgba(255, 255, 255, 0.07);
+	--background: #faf8f3;
+	--foreground: #1f2430;
+	--brand-primary: #0f766e;
+	--brand-accent: #115e59;
+	--surface-bg: rgba(255, 255, 255, 0.72);
+	--border-color: rgba(31, 36, 48, 0.1);
 }
 
 @theme inline {
@@ -16,6 +18,33 @@
 	--font-sans: var(--font-geist-sans);
 	--font-display: var(--font-outfit);
 	--font-mono: var(--font-geist-mono);
+
+	/* Remap the slate scale: in light mode "slate-950" is the page background
+	   (warm cream), "slate-100" is ink text. Components that styled for dark
+	   mode (bg-slate-950 cards, text-slate-100 headings) flip automatically. */
+	--color-slate-50: #ffffff;
+	--color-slate-100: #20242e;
+	--color-slate-200: #3b4250;
+	--color-slate-300: #5a6273;
+	--color-slate-400: #79808f;
+	--color-slate-500: #9aa1ad;
+	--color-slate-600: #aab0bb;
+	--color-slate-700: #c3c8d1;
+	--color-slate-800: #e2e4e9;
+	--color-slate-900: #eeece6;
+	--color-slate-950: #faf8f3;
+
+	/* Deep teal accent — pairs with the warm cream without shouting. */
+	--color-cyan-50: #effcfa;
+	--color-cyan-100: #d7f1ee;
+	--color-cyan-200: #aee2de;
+	--color-cyan-300: #74c8c2;
+	--color-cyan-400: #3ea8a1;
+	--color-cyan-500: #17827b;
+	--color-cyan-600: #0f766e;
+	--color-cyan-700: #0e5f59;
+	--color-cyan-800: #0f4a46;
+	--color-cyan-900: #113d3a;
 }
 
 * {
@@ -36,9 +65,8 @@ body {
 	position: relative;
 	overflow-x: hidden;
 	background-image:
-		radial-gradient(circle at 15% 10%, rgba(6, 182, 212, 0.09) 0%, transparent 40%),
-		radial-gradient(circle at 85% 90%, rgba(8, 145, 178, 0.07) 0%, transparent 40%),
-		radial-gradient(circle at 50% 50%, rgba(10, 20, 36, 0.6) 0%, #06101e 100%);
+		radial-gradient(circle at 12% 8%, rgba(15, 118, 110, 0.07) 0%, transparent 42%),
+		radial-gradient(circle at 88% 92%, rgba(15, 94, 89, 0.06) 0%, transparent 42%);
 }
 
 p {
@@ -55,9 +83,9 @@ body::before {
 	height: 100%;
 	pointer-events: none;
 	z-index: 1;
-	background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+	background-image: radial-gradient(rgba(31, 36, 48, 0.06) 1px, transparent 1px);
 	background-size: 26px 26px;
-	opacity: 0.4;
+	opacity: 0.5;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -72,14 +100,14 @@ a {
 
 /* Visible keyboard focus – accessibility requirement, applies everywhere. */
 :focus-visible {
-	outline: 2px solid rgba(6, 182, 212, 0.75);
+	outline: 2px solid rgba(15, 118, 110, 0.65);
 	outline-offset: 2px;
 	border-radius: 4px;
 }
 
 ::selection {
-	background: rgba(6, 182, 212, 0.25);
-	color: #ffffff;
+	background: rgba(15, 118, 110, 0.18);
+	color: #10302c;
 }
 
 /* Scrollbar styles */
@@ -89,16 +117,16 @@ a {
 }
 
 ::-webkit-scrollbar-track {
-	background: #030712;
+	background: #efece4;
 }
 
 ::-webkit-scrollbar-thumb {
-	background: rgba(255, 255, 255, 0.1);
+	background: rgba(31, 36, 48, 0.16);
 	border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-	background: rgba(6, 182, 212, 0.3);
+	background: rgba(15, 118, 110, 0.4);
 }
 
 /* Custom premium design system utility classes */
@@ -107,21 +135,21 @@ a {
 	backdrop-filter: blur(14px) saturate(180%);
 	-webkit-backdrop-filter: blur(14px) saturate(180%);
 	border: 1px solid var(--border-color);
-	box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+	box-shadow: 0 10px 40px -12px rgba(31, 36, 48, 0.14);
 }
 
 .glass-card {
-	background: rgba(17, 24, 39, 0.35);
+	background: rgba(255, 255, 255, 0.66);
 	backdrop-filter: blur(10px);
-	border: 1px solid rgba(255, 255, 255, 0.04);
-	box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+	border: 1px solid rgba(31, 36, 48, 0.08);
+	box-shadow: 0 8px 30px rgba(31, 36, 48, 0.08);
 	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-card:hover {
-	border-color: rgba(6, 182, 212, 0.2);
-	box-shadow: 0 20px 45px -12px rgba(6, 182, 212, 0.12);
-	background: rgba(17, 24, 39, 0.5);
+	border-color: rgba(15, 118, 110, 0.28);
+	box-shadow: 0 20px 45px -12px rgba(15, 118, 110, 0.16);
+	background: rgba(255, 255, 255, 0.86);
 	transform: translateY(-2px);
 }
 
@@ -167,14 +195,14 @@ a {
 .skeleton {
 	position: relative;
 	overflow: hidden;
-	background: rgba(255, 255, 255, 0.06);
+	background: rgba(31, 36, 48, 0.08);
 }
 
 .skeleton::after {
 	content: "";
 	position: absolute;
 	inset: 0;
-	background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.12), transparent);
+	background: linear-gradient(90deg, transparent, rgba(15, 118, 110, 0.14), transparent);
 	background-size: 200% 100%;
 	animation: shimmer 1.6s linear infinite;
 }
