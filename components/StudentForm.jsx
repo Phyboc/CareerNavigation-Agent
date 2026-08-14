@@ -187,7 +187,7 @@ export default function StudentForm({ onAnalyze, loading = false }) {
 			) : null}
 
 			<div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center">
-				<button type="submit" disabled={loading} className="inline-flex h-12 items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 via-cyan-600 to-cyan-700 px-8 text-sm font-semibold text-white shadow-[0_4px_20px_rgba(15,118,110,0.25)] transition hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70">
+				<button type="submit" disabled={loading} className="inline-flex h-12 items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 via-cyan-600 to-cyan-700 px-8 text-sm font-semibold text-white shadow-[0_4px_20px_rgba(15,118,110,0.25)] transition hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70 dark:from-cyan-600 dark:via-cyan-700 dark:to-cyan-900">
 					{loading ? "Analyzing Profile Details..." : "Run Career Assessment"}
 				</button>
 				<p className="text-xs text-slate-500">Your information will be securely cached in your local session store.</p>

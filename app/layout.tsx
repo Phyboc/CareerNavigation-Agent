@@ -43,6 +43,19 @@ export default function RootLayout({
 			className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable} h-full antialiased`}
 			suppressHydrationWarning={true}
 		>
+			<head>
+				<script
+					dangerouslySetInnerHTML={{
+						__html: `(function(){
+							try {
+								var stored = localStorage.getItem("careercompass-theme");
+								var dark = stored === "dark" || (stored !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+								if (dark) document.documentElement.classList.add("dark");
+							} catch (e) {}
+						})();`
+					}}
+				/>
+			</head>
 			<body className="flex min-h-full flex-col bg-slate-950 text-slate-100">
 				<a
 					href="#main"

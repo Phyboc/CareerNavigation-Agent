@@ -1,15 +1,110 @@
 @import "tailwindcss";
 
-/* Light editorial theme — warm cream surfaces, dark ink text, deep teal accent.
-   The slate scale is remapped so dark-mode utilities (slate-950 backgrounds,
-   slate-100 text, etc.) resolve to light equivalents in one place. */
+/* Class-based dark mode: `.dark` on <html> flips the token variables below,
+   and every Tailwind utility resolves through those vars, so the whole UI
+   theme flips without per-component `dark:` classes. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
+	/* Light editorial theme — warm cream surfaces, dark ink text, deep teal accent. */
 	--background: #faf8f3;
 	--foreground: #1f2430;
 	--brand-primary: #0f766e;
 	--brand-accent: #115e59;
 	--surface-bg: rgba(255, 255, 255, 0.72);
 	--border-color: rgba(31, 36, 48, 0.1);
+	--dot-grid: rgba(31, 36, 48, 0.06);
+	--glow-1: rgba(15, 118, 110, 0.07);
+	--glow-2: rgba(15, 94, 89, 0.06);
+	--card-surface: rgba(255, 255, 255, 0.8);
+	--card-surface-solid: #ffffff;
+	--skeleton: rgba(31, 36, 48, 0.08);
+	--scrollbar-track: #efece4;
+
+	/* Slate scale remapped for light mode ("slate-950" = page background cream,
+	   "slate-100" = ink text). Utilities resolve via var() so .dark flips them. */
+	--slate-50: #ffffff;
+	--slate-100: #20242e;
+	--slate-200: #3b4250;
+	--slate-300: #5a6273;
+	--slate-400: #79808f;
+	--slate-500: #9aa1ad;
+	--slate-600: #aab0bb;
+	--slate-700: #c3c8d1;
+	--slate-800: #e2e4e9;
+	--slate-900: #eeece6;
+	--slate-950: #faf8f3;
+
+	/* Deep teal accent — pairs with the warm cream without shouting. */
+	--cyan-50: #effcfa;
+	--cyan-100: #d7f1ee;
+	--cyan-200: #aee2de;
+	--cyan-300: #74c8c2;
+	--cyan-400: #3ea8a1;
+	--cyan-500: #17827b;
+	--cyan-600: #0f766e;
+	--cyan-700: #0e5f59;
+	--cyan-800: #0f4a46;
+	--cyan-900: #113d3a;
+
+	/* Status tints used as text on tinted cards (readable on light). */
+	--emerald-700: #047857;
+	--emerald-800: #065f46;
+	--rose-700: #be123c;
+	--rose-800: #9f1239;
+	--amber-700: #b45309;
+	--amber-800: #92400e;
+	--sky-700: #0369a1;
+	--sky-800: #075985;
+}
+
+.dark {
+	/* Dark navy theme — deep background, light text, brighter teal accents. */
+	--background: #060b15;
+	--foreground: #e6ebf4;
+	--brand-primary: #14b8a6;
+	--brand-accent: #2dd4bf;
+	--surface-bg: rgba(13, 20, 34, 0.72);
+	--border-color: rgba(230, 235, 244, 0.1);
+	--dot-grid: rgba(230, 235, 244, 0.05);
+	--glow-1: rgba(20, 184, 166, 0.08);
+	--glow-2: rgba(45, 212, 191, 0.06);
+	--card-surface: rgba(15, 23, 42, 0.8);
+	--card-surface-solid: #0f172a;
+	--skeleton: rgba(230, 235, 244, 0.1);
+	--scrollbar-track: #0b1120;
+
+	--slate-50: #ffffff;
+	--slate-100: #f3f4f6;
+	--slate-200: #d1d5db;
+	--slate-300: #9ca3af;
+	--slate-400: #6b7280;
+	--slate-500: #4b5563;
+	--slate-600: #374151;
+	--slate-700: #1f2937;
+	--slate-800: #111827;
+	--slate-900: #0b1220;
+	--slate-950: #060b15;
+
+	--cyan-50: #0e1a24;
+	--cyan-100: #10303a;
+	--cyan-200: #5eead4;
+	--cyan-300: #2dd4bf;
+	--cyan-400: #14b8a6;
+	--cyan-500: #0d9488;
+	--cyan-600: #0f766e;
+	--cyan-700: #2dd4bf;
+	--cyan-800: #5eead4;
+	--cyan-900: #115e59;
+
+	--emerald-700: #34d399;
+	--emerald-800: #6ee7b7;
+	--rose-700: #fb7185;
+	--rose-800: #fda4af;
+	--amber-700: #fbbf24;
+	--amber-800: #fcd34d;
+	--sky-700: #38bdf8;
+	--sky-800: #7dd3fc;
 }
 
 @theme inline {
@@ -19,32 +114,37 @@
 	--font-display: var(--font-outfit);
 	--font-mono: var(--font-geist-mono);
 
-	/* Remap the slate scale: in light mode "slate-950" is the page background
-	   (warm cream), "slate-100" is ink text. Components that styled for dark
-	   mode (bg-slate-950 cards, text-slate-100 headings) flip automatically. */
-	--color-slate-50: #ffffff;
-	--color-slate-100: #20242e;
-	--color-slate-200: #3b4250;
-	--color-slate-300: #5a6273;
-	--color-slate-400: #79808f;
-	--color-slate-500: #9aa1ad;
-	--color-slate-600: #aab0bb;
-	--color-slate-700: #c3c8d1;
-	--color-slate-800: #e2e4e9;
-	--color-slate-900: #eeece6;
-	--color-slate-950: #faf8f3;
+	--color-slate-50: var(--slate-50);
+	--color-slate-100: var(--slate-100);
+	--color-slate-200: var(--slate-200);
+	--color-slate-300: var(--slate-300);
+	--color-slate-400: var(--slate-400);
+	--color-slate-500: var(--slate-500);
+	--color-slate-600: var(--slate-600);
+	--color-slate-700: var(--slate-700);
+	--color-slate-800: var(--slate-800);
+	--color-slate-900: var(--slate-900);
+	--color-slate-950: var(--slate-950);
 
-	/* Deep teal accent — pairs with the warm cream without shouting. */
-	--color-cyan-50: #effcfa;
-	--color-cyan-100: #d7f1ee;
-	--color-cyan-200: #aee2de;
-	--color-cyan-300: #74c8c2;
-	--color-cyan-400: #3ea8a1;
-	--color-cyan-500: #17827b;
-	--color-cyan-600: #0f766e;
-	--color-cyan-700: #0e5f59;
-	--color-cyan-800: #0f4a46;
-	--color-cyan-900: #113d3a;
+	--color-cyan-50: var(--cyan-50);
+	--color-cyan-100: var(--cyan-100);
+	--color-cyan-200: var(--cyan-200);
+	--color-cyan-300: var(--cyan-300);
+	--color-cyan-400: var(--cyan-400);
+	--color-cyan-500: var(--cyan-500);
+	--color-cyan-600: var(--cyan-600);
+	--color-cyan-700: var(--cyan-700);
+	--color-cyan-800: var(--cyan-800);
+	--color-cyan-900: var(--cyan-900);
+
+	--color-emerald-700: var(--emerald-700);
+	--color-emerald-800: var(--emerald-800);
+	--color-rose-700: var(--rose-700);
+	--color-rose-800: var(--rose-800);
+	--color-amber-700: var(--amber-700);
+	--color-amber-800: var(--amber-800);
+	--color-sky-700: var(--sky-700);
+	--color-sky-800: var(--sky-800);
 }
 
 * {
@@ -54,6 +154,11 @@
 html {
 	scroll-behavior: smooth;
 	height: 100%;
+	color-scheme: light;
+}
+
+html.dark {
+	color-scheme: dark;
 }
 
 body {
@@ -65,8 +170,8 @@ body {
 	position: relative;
 	overflow-x: hidden;
 	background-image:
-		radial-gradient(circle at 12% 8%, rgba(15, 118, 110, 0.07) 0%, transparent 42%),
-		radial-gradient(circle at 88% 92%, rgba(15, 94, 89, 0.06) 0%, transparent 42%);
+		radial-gradient(circle at 12% 8%, var(--glow-1) 0%, transparent 42%),
+		radial-gradient(circle at 88% 92%, var(--glow-2) 0%, transparent 42%);
 }
 
 p {
@@ -83,7 +188,7 @@ body::before {
 	height: 100%;
 	pointer-events: none;
 	z-index: 1;
-	background-image: radial-gradient(rgba(31, 36, 48, 0.06) 1px, transparent 1px);
+	background-image: radial-gradient(var(--dot-grid) 1px, transparent 1px);
 	background-size: 26px 26px;
 	opacity: 0.5;
 }
@@ -105,9 +210,18 @@ a {
 	border-radius: 4px;
 }
 
+.dark :focus-visible {
+	outline-color: rgba(45, 212, 191, 0.7);
+}
+
 ::selection {
 	background: rgba(15, 118, 110, 0.18);
 	color: #10302c;
+}
+
+.dark ::selection {
+	background: rgba(45, 212, 191, 0.25);
+	color: #062823;
 }
 
 /* Scrollbar styles */
@@ -117,7 +231,7 @@ a {
 }
 
 ::-webkit-scrollbar-track {
-	background: #efece4;
+	background: var(--scrollbar-track);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -125,8 +239,16 @@ a {
 	border-radius: 9999px;
 }
 
+.dark ::-webkit-scrollbar-thumb {
+	background: rgba(230, 235, 244, 0.16);
+}
+
 ::-webkit-scrollbar-thumb:hover {
 	background: rgba(15, 118, 110, 0.4);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+	background: rgba(45, 212, 191, 0.4);
 }
 
 /* Custom premium design system utility classes */
@@ -138,10 +260,14 @@ a {
 	box-shadow: 0 10px 40px -12px rgba(31, 36, 48, 0.14);
 }
 
+.dark .glass-panel {
+	box-shadow: 0 10px 40px -12px rgba(0, 0, 0, 0.5);
+}
+
 .glass-card {
-	background: rgba(255, 255, 255, 0.66);
+	background: var(--card-surface);
 	backdrop-filter: blur(10px);
-	border: 1px solid rgba(31, 36, 48, 0.08);
+	border: 1px solid var(--border-color);
 	box-shadow: 0 8px 30px rgba(31, 36, 48, 0.08);
 	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -149,9 +275,25 @@ a {
 .glass-card:hover {
 	border-color: rgba(15, 118, 110, 0.28);
 	box-shadow: 0 20px 45px -12px rgba(15, 118, 110, 0.16);
-	background: rgba(255, 255, 255, 0.86);
+	background: var(--card-surface-solid);
 	transform: translateY(-2px);
 }
+
+.dark .glass-card:hover {
+	border-color: rgba(45, 212, 191, 0.3);
+	box-shadow: 0 20px 45px -12px rgba(20, 184, 166, 0.18);
+}
+
+/* Light surfaces used across cards/forms flip to dark navy in dark mode
+   without touching every component. */
+.dark .bg-white { background-color: var(--card-surface-solid); }
+.dark .bg-white\/60 { background-color: rgba(15, 23, 42, 0.6); }
+.dark .bg-white\/70 { background-color: rgba(15, 23, 42, 0.7); }
+.dark .bg-white\/80 { background-color: var(--card-surface); }
+.dark .bg-white\/85 { background-color: rgba(15, 23, 42, 0.85); }
+.dark .bg-white\/95 { background-color: rgba(10, 16, 30, 0.95); }
+.dark .bg-white\/5 { background-color: rgba(230, 235, 244, 0.05); }
+.dark .bg-white\/10 { background-color: rgba(230, 235, 244, 0.1); }
 
 /* Animations */
 @keyframes fade-in {
@@ -195,7 +337,7 @@ a {
 .skeleton {
 	position: relative;
 	overflow: hidden;
-	background: rgba(31, 36, 48, 0.08);
+	background: var(--skeleton);
 }
 
 .skeleton::after {
@@ -205,4 +347,8 @@ a {
 	background: linear-gradient(90deg, transparent, rgba(15, 118, 110, 0.14), transparent);
 	background-size: 200% 100%;
 	animation: shimmer 1.6s linear infinite;
+}
+
+.dark .skeleton::after {
+	background: linear-gradient(90deg, transparent, rgba(45, 212, 191, 0.16), transparent);
 }

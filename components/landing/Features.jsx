@@ -1,3 +1,5 @@
+import Reveal from "../ui/Reveal";
+
 const features = [
 	{
 		title: "AI Mentor Insights",
@@ -71,10 +73,10 @@ export default function Features() {
 					CareerCompass AI compiles candidate profiles, identifies missing alignments, and generates study plans.
 				</p>
 			</div>
-			<div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+			<Reveal className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
 				{features.map((feature, idx) => (
+					<Reveal key={feature.title} delay={idx * 0.07} className="contents">
 					<article
-						key={feature.title}
 						className={`rounded-3xl border border-slate-700/20 bg-white/80 p-6 sm:p-8 transition-all duration-300 hover:border-cyan-600/30 hover:bg-white hover:shadow-[0_15px_35px_rgba(15,118,110,0.08)] ${feature.spanClass || ""}`}
 					>
 						<span className="flex h-11 w-11 items-center justify-center rounded-xl bg-cyan-600/10 text-cyan-700">
@@ -83,8 +85,9 @@ export default function Features() {
 						<h3 className="mt-5 font-display text-lg font-bold text-slate-100 leading-snug">{feature.title}</h3>
 						<p className="mt-2 text-sm leading-relaxed text-slate-400">{feature.description}</p>
 					</article>
+					</Reveal>
 				))}
-			</div>
+			</Reveal>
 		</section>
 	);
 }

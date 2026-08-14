@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const navItems = [
 	{ href: "/", label: "Home" },
@@ -16,12 +16,32 @@ const navItems = [
 export default function Navbar() {
 	const pathname = usePathname();
 	const [open, setOpen] = useState(false);
+	const [dark, setDark] = useState(false);
+
+	// Sync the toggle with the <html> class after mount (the layout script
+	// already applied the stored/system theme before paint).
+	useEffect(() => {
+		setDark(document.documentElement.classList.contains("dark"));
+	}, []);
+
+	const toggleTheme = () => {
+		setDark(previous => {
+			const next = !previous;
+			try {
+				localStorage.setItem("careercompass-theme", next ? "dark" : "light");
+			} catch {
+				// localStorage may be unavailable
+			}
+			document.documentElement.classList.toggle("dark", next);
+			return next;
+		});
+	};
 
 	return (
 		<header className="sticky top-0 z-50 border-b border-slate-700/20 bg-white/80 backdrop-blur-md">
 			<div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
 				<Link href="/" className="flex items-center gap-3">
-					<span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-cyan-700 font-display text-sm font-black text-white shadow-[0_0_20px_rgba(15,118,110,0.25)]">
+					<span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-cyan-700 font-display text-sm font-black text-white shadow-[0_0_20px_rgba(15,118,110,0.25)] dark:from-cyan-600 dark:to-cyan-900">
 						CC
 					</span>
 					<div>
@@ -49,18 +69,35 @@ export default function Navbar() {
 					})}
 					<Link
 						href="/analysis"
-						className="ml-3 inline-flex h-10 items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 to-cyan-700 px-5 text-sm font-semibold text-white shadow-[0_4px_20px_rgba(15,118,110,0.25)] transition duration-200 hover:brightness-110 active:scale-[0.98] active:translate-y-[0.5px]"
+						className="ml-3 inline-flex h-10 items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 to-cyan-700 px-5 text-sm font-semibold text-white shadow-[0_4px_20px_rgba(15,118,110,0.25)] transition duration-200 hover:brightness-110 active:scale-[0.98] active:translate-y-[0.5px] dark:from-cyan-600 dark:to-cyan-900"
 					>
 						View Analysis
 					</Link>
 				</nav>
 
-				<button
-					type="button"
-					aria-label="Toggle navigation menu"
-					onClick={() => setOpen(prev => !prev)}
-					className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-700/25 bg-white text-slate-300 hover:text-slate-100 transition md:hidden"
-				>
+				<div className="flex items-center gap-2">
+					<button
+						type="button"
+						aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+						onClick={toggleTheme}
+						className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-700/25 bg-white text-slate-300 hover:text-slate-100 transition"
+					>
+						{dark ? (
+							<svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+							</svg>
+						) : (
+							<svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+							</svg>
+						)}
+					</button>
+					<button
+						type="button"
+						aria-label="Toggle navigation menu"
+						onClick={() => setOpen(prev => !prev)}
+						className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-700/25 bg-white text-slate-300 hover:text-slate-100 transition md:hidden"
+					>
 					{open ? (
 						<svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -70,8 +107,9 @@ export default function Navbar() {
 							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
 						</svg>
 					)}
-				</button>
-			</div>
+					</button>
+				</div>
+				</div>
 
 			{open ? (
 				<nav className="border-t border-slate-700/20 bg-white/95 backdrop-blur-md px-4 py-4 md:hidden animate-fade-in">
@@ -96,7 +134,7 @@ export default function Navbar() {
 						<Link
 							href="/analysis"
 							onClick={() => setOpen(false)}
-							className="mt-2 inline-flex h-11 items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 to-cyan-700 px-4 text-sm font-semibold text-white shadow-[0_4px_15px_rgba(15,118,110,0.25)]"
+							className="mt-2 inline-flex h-11 items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 to-cyan-700 px-4 text-sm font-semibold text-white shadow-[0_4px_15px_rgba(15,118,110,0.25)] dark:from-cyan-600 dark:to-cyan-900"
 						>
 							View Analysis
 						</Link>

@@ -58,7 +58,7 @@ export default function AIMentorInsights({ analysis }) {
 		>
 			<div className="mt-6 rounded-[28px] border border-cyan-600/20 bg-gradient-to-br from-cyan-600/10 via-cyan-600/5 to-transparent p-6">
 				<div className="flex items-start gap-4">
-					<div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500 to-cyan-700 text-lg font-bold text-white">
+					<div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500 to-cyan-700 text-lg font-bold text-white dark:from-cyan-600 dark:to-cyan-900">
 						AI
 					</div>
 					<div className="space-y-4">

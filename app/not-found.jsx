@@ -12,7 +12,7 @@ export default function NotFound() {
 			<div className="relative mt-8 flex flex-col gap-3 sm:flex-row">
 				<Link
 					href="/assessment"
-					className="inline-flex h-11 items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 to-cyan-700 px-6 text-sm font-semibold text-white transition hover:brightness-110"
+					className="inline-flex h-11 items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 to-cyan-700 px-6 text-sm font-semibold text-white transition hover:brightness-110 dark:from-cyan-600 dark:to-cyan-900"
 				>
 					Start assessment
 				</Link>

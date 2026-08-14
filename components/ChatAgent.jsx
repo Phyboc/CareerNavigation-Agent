@@ -140,7 +140,7 @@ export default function ChatAgent() {
 						type="button"
 						onClick={handleSend}
 						disabled={sending || !input.trim()}
-						className="inline-flex h-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 to-cyan-700 px-5 text-sm font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+						className="inline-flex h-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 to-cyan-700 px-5 text-sm font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 dark:from-cyan-600 dark:to-cyan-900"
 					>
 						{sending ? "Sending…" : "Send"}
 					</button>

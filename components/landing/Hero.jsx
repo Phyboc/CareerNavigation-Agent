@@ -1,7 +1,9 @@
 import Button from "../ui/Button";
+import Reveal from "../ui/Reveal";
 
 export default function Hero() {
 	return (
+		<Reveal>
 		<section className="relative overflow-hidden rounded-[40px] border border-slate-700/20 bg-white/80 p-8 shadow-[0_30px_80px_rgba(15,118,110,0.1)] backdrop-blur sm:p-12 lg:p-16">
 			<div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-cyan-600/10 blur-3xl animate-pulse-slow" />
 			<div className="pointer-events-none absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-cyan-700/10 blur-3xl animate-pulse-slow" />
@@ -29,5 +31,6 @@ export default function Hero() {
 				</div>
 			</div>
 		</section>
+		</Reveal>
 	);
 }

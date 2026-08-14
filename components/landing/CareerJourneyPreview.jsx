@@ -1,7 +1,10 @@
+import Reveal from "../ui/Reveal";
+
 const stages = ["Student", "Learner", "Builder", "Professional", "Industry Ready"];
 
 export default function CareerJourneyPreview() {
 	return (
+		<Reveal>
 		<section className="glass-panel rounded-[32px] p-6 sm:p-8 md:p-10 transition duration-300 hover:border-cyan-600/25">
 			<div className="text-center">
 				<p className="text-sm font-medium tracking-wide text-cyan-700">Career journey</p>
@@ -33,5 +36,6 @@ export default function CareerJourneyPreview() {
 				))}
 			</div>
 		</section>
+		</Reveal>
 	);
 }

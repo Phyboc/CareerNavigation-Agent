@@ -1,3 +1,5 @@
+import Reveal from "../ui/Reveal";
+
 const problems = [
 	"Not knowing which role actually fits their skills and interests",
 	"No sense of real readiness or the credentials target roles expect",
@@ -14,6 +16,7 @@ const solutions = [
 
 export default function WhyCareerCompass() {
 	return (
+		<Reveal>
 		<section id="why" className="scroll-mt-24 glass-panel rounded-[32px] p-6 sm:p-10 transition duration-300 hover:border-cyan-600/25">
 			<div className="text-center">
 				<p className="text-sm font-medium tracking-wide text-cyan-700">Why CareerCompass AI?</p>
@@ -52,5 +55,6 @@ export default function WhyCareerCompass() {
 				</div>
 			</div>
 		</section>
+		</Reveal>
 	);
 }

@@ -213,7 +213,7 @@ export default function ResumeAnalyzer({ targetCareer = "AI Engineer" }) {
 						type="button"
 						onClick={handleAnalyze}
 						disabled={isAnalyzing}
-						className="inline-flex h-11 items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 to-cyan-700 px-5 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-70"
+						className="inline-flex h-11 items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 to-cyan-700 px-5 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-70 dark:from-cyan-600 dark:to-cyan-900"
 					>
 						{isAnalyzing ? "Analyzing…" : "Analyze with AI"}
 					</button>

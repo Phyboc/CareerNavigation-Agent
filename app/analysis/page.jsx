@@ -9,6 +9,7 @@ import ExportReportButton from "../../components/ExportReportButton";
 import ReadinessScore from "../../components/ReadinessScore";
 import SkillGap from "../../components/SkillGap";
 import LoadingState from "../../components/ui/LoadingState";
+import Reveal from "../../components/ui/Reveal";
 import { useAnalysis } from "../../context/AnalysisContext";
 
 export default function AnalysisPage() {
@@ -78,24 +79,34 @@ export default function AnalysisPage() {
 				</div>
 			) : null}
 
-			<CareerJourney score={analysis.readiness?.score ?? 0} />
+			<Reveal>
+				<CareerJourney score={analysis.readiness?.score ?? 0} />
+			</Reveal>
 
-			<ReadinessScore
-				score={analysis.readiness?.score ?? 0}
-				strengths={analysis.readiness?.strengths ?? []}
-				weaknesses={analysis.readiness?.weaknesses ?? []}
-				loading={loading}
-			/>
+			<Reveal delay={0.08}>
+				<ReadinessScore
+					score={analysis.readiness?.score ?? 0}
+					strengths={analysis.readiness?.strengths ?? []}
+					weaknesses={analysis.readiness?.weaknesses ?? []}
+					loading={loading}
+				/>
+			</Reveal>
 
-			<CareerMatches matches={analysis.careerMatches ?? []} selectedCareer={analysis.profile?.goal} />
+			<Reveal delay={0.16}>
+				<CareerMatches matches={analysis.careerMatches ?? []} selectedCareer={analysis.profile?.goal} />
+			</Reveal>
 
-			<SkillGap
-				existingSkills={analysis.skillGap?.existingSkills ?? []}
-				missingSkills={analysis.skillGap?.missingSkills ?? []}
-				prioritySkills={analysis.skillGap?.prioritySkills ?? []}
-			/>
+			<Reveal delay={0.24}>
+				<SkillGap
+					existingSkills={analysis.skillGap?.existingSkills ?? []}
+					missingSkills={analysis.skillGap?.missingSkills ?? []}
+					prioritySkills={analysis.skillGap?.prioritySkills ?? []}
+				/>
+			</Reveal>
 
-			<AIMentorInsights analysis={analysis} />
+			<Reveal delay={0.32}>
+				<AIMentorInsights analysis={analysis} />
+			</Reveal>
 		</div>
 	);
 }
