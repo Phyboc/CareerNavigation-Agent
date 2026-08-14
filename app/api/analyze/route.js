@@ -2,15 +2,15 @@ import { NextResponse } from "next/server";
 
 import { analyzeCareerProfile } from "../../../lib/analyzer";
 
-export async function POST(request) {
-	try {
-		const body = await request.json();
-		const analysis = analyzeCareerProfile(body);
+export async function POST(request) {		try {
+			const body = await request.json();
+			// analyzeCareerProfile is async (it may run the resume-AI step), so it must be awaited.
+			const analysis = await analyzeCareerProfile(body);
 
-		return NextResponse.json({
-			success: true,
-			...analysis
-		});
+			return NextResponse.json({
+				success: true,
+				...analysis
+			});
 	} catch (error) {
 		return NextResponse.json(
 			{

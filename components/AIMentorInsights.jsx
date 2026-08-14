@@ -3,25 +3,56 @@
 import { useState, useEffect } from "react";
 import { buildMentorInsights } from "../lib/mentorInsights";
 import SectionCard from "./ui/SectionCard";
-import Badge from "./ui/Badge";
-
-export default function AIMentorInsights({ analysis }) {
+import Badge from "./ui/Badge";	export default function AIMentorInsights({ analysis }) {
 	const [mentor, setMentor] = useState(null);
-	const [loadingInsights, setLoadingInsights] = useState(false);
+	const [failed, setFailed] = useState(false);
 
 	useEffect(() => {
 		if (!analysis) return;
-		setLoadingInsights(true);
-		buildMentorInsights(analysis)
-			.then(setMentor)
-			.catch(err => console.error("Error building mentor insights:", err))
-			.finally(() => setLoadingInsights(false));
+		let cancelled = false;
+
+		async function loadInsights() {
+			try {
+				// AI mentor insights are generated server-side so GROQ_API_KEY never
+				// reaches the browser. The route already falls back to static text
+				// when the model call fails.
+				const response = await fetch("/api/mentor-insights", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ analysis })
+				});
+				const payload = await response.json();
+				if (!cancelled && response.ok && payload?.success) {
+					setMentor(payload);
+					return;
+				}
+				throw new Error(payload?.error || "Mentor insights request failed");
+			} catch (err) {
+				// Network failure fallback: build static insights locally (no API key
+				// is available client-side, so this is deterministic text only).
+				console.error("Error loading mentor insights, using static fallback:", err);
+				try {
+					const fallback = await buildMentorInsights(analysis);
+					if (!cancelled) setMentor(fallback);
+				} catch (fallbackError) {
+					console.error("Static mentor insights fallback failed:", fallbackError);
+					if (!cancelled) setFailed(true);
+				}
+			}
+		}
+
+		loadInsights();
+		return () => {
+			cancelled = true;
+		};
 	}, [analysis]);
 
 	if (!analysis) return null;
 
 	const paragraphs = mentor?.paragraphs ?? [];
 	const highlight = mentor?.highlight ?? {};
+	// Derived loading state: loading until we have insights or definitively failed.
+	const loadingInsights = !failed && mentor === null;
 
 	return (
 		<SectionCard
@@ -42,7 +73,9 @@ export default function AIMentorInsights({ analysis }) {
 								</p>
 							))
 						) : (
-							<p className="text-sm text-slate-400">Loading mentor insights…</p>
+							<p className="text-sm text-slate-400">
+								{loadingInsights ? "Loading mentor insights…" : "Mentor insights are unavailable right now."}
+							</p>
 						)}
 					</div>
 				</div>
