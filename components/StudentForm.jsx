@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { fetchJson } from "../lib/apiClient";
+import { buildAnalysis, getRequiredSkills } from "../lib/analyzer";
 
 export default function StudentForm({ onAnalyze, loading = false }) {
 	const [form, setForm] = useState({
@@ -17,7 +18,36 @@ export default function StudentForm({ onAnalyze, loading = false }) {
 	const [uploading, setUploading] = useState(false);
 	const [extracted, setExtracted] = useState(null);
 	const [uploadError, setUploadError] = useState("");
+	const [live, setLive] = useState(null);
 	const fileInputRef = useRef(null);
+
+	// Live readiness preview: recompute the deterministic analysis as the form
+	// changes so the score updates in real time (no server round-trip).
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			try {
+				const payload = {
+					name: form.name,
+					degree: form.degree,
+					skills: form.skills,
+					projects: form.projects,
+					goal: form.goal,
+					hoursPerDay: Number(form.hours) || 1
+				};
+				const result = buildAnalysis(payload);
+				setLive({
+					score: result.readiness.score,
+					matched: result.skillGap.existingSkills.length,
+					missing: result.skillGap.missingSkills.length,
+					total: getRequiredSkills(form.goal).length,
+					goal: form.goal
+				});
+			} catch {
+				// Ignore partial/invalid form states.
+			}
+		}, 400);
+		return () => clearTimeout(timer);
+	}, [form]);
 
 	const handleChange = (field) => (event) => {
 		setForm(previous => ({
@@ -56,8 +86,15 @@ export default function StudentForm({ onAnalyze, loading = false }) {
 			if (payload.success) {
 				const data = payload.data || {};
 				const skills = Array.isArray(data.detectedSkills) ? data.detectedSkills.join(", ") : form.skills;
-				const projects = Array.isArray(data.projects) ? data.projects.join(", ") : form.projects;
-				const degree = data.education && data.education.length ? data.education[0] : form.degree;
+				// Projects are structured { title, description } – only titles go
+				// into the form; descriptions are kept for the analysis view.
+				const projects = Array.isArray(data.projects)
+					? data.projects.map(project => (typeof project === "string" ? project : project.title)).filter(Boolean).join(", ")
+					: (data.projectTitles || []).join(", ") || form.projects;
+				const firstEducation = data.education && data.education.length ? data.education[0] : "";
+				const degree = typeof firstEducation === "string"
+					? firstEducation
+					: [firstEducation?.degree, firstEducation?.institution].filter(Boolean).join(", ") || form.degree;
 				setForm(prev => ({ ...prev, name: data.name || prev.name, skills, projects, degree, resumeText: data.fullText || prev.resumeText }));
 				setExtracted(data);
 			} else {
@@ -137,7 +174,19 @@ export default function StudentForm({ onAnalyze, loading = false }) {
 				</div>
 			</div>
 
-			<div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
+			{live ? (
+				<div className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-2xl border border-cyan-400/15 bg-cyan-400/5 px-4 py-3 text-sm text-slate-300">
+					<span className="font-semibold text-cyan-200">Live readiness: {live.score}%</span>
+					<span className="text-slate-400">· {live.matched} of {live.total} {live.goal} skills matched</span>
+					{live.missing > 0 ? (
+						<span className="text-amber-200">· {live.missing} skills to close</span>
+					) : (
+						<span className="text-emerald-200">· No major gaps</span>
+					)}
+				</div>
+			) : null}
+
+			<div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center">
 				<button type="submit" disabled={loading} className="inline-flex h-12 items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 via-cyan-500 to-blue-500 px-8 text-sm font-semibold text-slate-950 shadow-[0_4px_20px_rgba(6,182,212,0.25)] transition hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70">
 					{loading ? "Analyzing Profile Details..." : "Run Career Assessment"}
 				</button>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { analyzeResumeText } from "../lib/analyzer";
 import { fetchJson } from "../lib/apiClient";
@@ -42,20 +42,50 @@ export default function ResumeAnalyzer({ targetCareer = "AI Engineer" }) {
 	const [uploading, setUploading] = useState(false);
 	const [error, setError] = useState("");
 	const fileInputRef = useRef(null);
+	// Guards against stale responses: incremented on every edit/request, so an
+	// older server response can never overwrite results for newer text.
+	const requestIdRef = useRef(0);
+
+	// Real-time metrics: recompute the deterministic keyword analysis client-side
+	// as the text changes (debounced), so the score, fit, and skill chips update
+	// instantly without waiting for the server.
+	useEffect(() => {
+		const text = resumeText.trim();
+		if (!text) return;
+		const id = ++requestIdRef.current;
+		const timer = setTimeout(() => {
+			const live = analyzeResumeText(text, targetCareer);
+			if (requestIdRef.current === id) {
+				setAnalysis(previous => ({
+					...live,
+					// Keep structured sections from the last server/AI run so they
+					// don't vanish while the user edits the text.
+					name: previous?.name || "",
+					projects: previous?.projects || [],
+					education: previous?.education || [],
+					certifications: previous?.certifications || []
+				}));
+			}
+		}, 500);
+		return () => clearTimeout(timer);
+	}, [resumeText, targetCareer]);
 
 	const runAnalysis = async (text) => {
+		const id = ++requestIdRef.current;
 		setIsAnalyzing(true);
 		setError("");
 		try {
 			const data = await analyzeResumeViaServer(text, targetCareer);
-			setAnalysis(data);
+			if (requestIdRef.current === id) setAnalysis(data);
 		} catch (err) {
 			// Offline/edge fallback: run the deterministic analyzer client-side.
 			console.error("Server resume analysis failed, using local fallback:", err);
-			setAnalysis(analyzeResumeText(text, targetCareer));
-			setError("Live analysis is unavailable — showing local keyword results.");
+			if (requestIdRef.current === id) {
+				setAnalysis(analyzeResumeText(text, targetCareer));
+				setError("AI analysis is unavailable — showing local keyword results.");
+			}
 		} finally {
-			setIsAnalyzing(false);
+			if (requestIdRef.current === id) setIsAnalyzing(false);
 		}
 	};
 
@@ -71,6 +101,7 @@ export default function ResumeAnalyzer({ targetCareer = "AI Engineer" }) {
 	const handleFileUpload = async (event) => {
 		const file = event.target.files?.[0];
 		if (!file) return;
+		const id = ++requestIdRef.current;
 		setUploading(true);
 		setError("");
 		try {
@@ -87,13 +118,17 @@ export default function ResumeAnalyzer({ targetCareer = "AI Engineer" }) {
 			const data = payload.data || {};
 			// The server already analyzed the extracted text, so fill both the
 			// editor and the results in one step.
-			setResumeText(data.fullText || resumeText);
-			setAnalysis(data);
+			if (requestIdRef.current === id) {
+				setResumeText(data.fullText || resumeText);
+				setAnalysis(data);
+			}
 		} catch (err) {
 			console.error("Resume upload error", err);
-			setError(err instanceof Error ? err.message : "Could not read the uploaded file.");
+			if (requestIdRef.current === id) {
+				setError(err instanceof Error ? err.message : "Could not read the uploaded file.");
+			}
 		} finally {
-			setUploading(false);
+			if (requestIdRef.current === id) setUploading(false);
 			if (fileInputRef.current) {
 				fileInputRef.current.value = "";
 			}
@@ -104,7 +139,31 @@ export default function ResumeAnalyzer({ targetCareer = "AI Engineer" }) {
 	const missingSkills = analysis?.missingSkills || [];
 	const detectedSkills = analysis?.detectedSkills || [];
 	const suggestions = analysis?.suggestions || [];
-	const extractedSections = analysis?.projects?.length || analysis?.education?.length || analysis?.certifications?.length;
+	// Projects arrive as { title, description } objects (or legacy strings).
+	const projectsList = (analysis?.projects || []).map(project =>
+		typeof project === "string" ? { title: project, description: "" } : project
+	);
+	const extractedSections = projectsList.length || analysis?.education?.length || analysis?.certifications?.length;
+
+	// Defensive: a section entry may arrive as a string or an object (the model
+	// sometimes returns structured education/certification objects). Coerce to a
+	// display string so the UI never renders a raw object.
+	const toDisplayString = (value) => {
+		if (typeof value === "string") return value;
+		if (value && typeof value === "object") {
+			const parts = [value.degree, value.institution, value.gpa && `GPA: ${value.gpa}`];
+			const joined = parts.filter(Boolean).join(", ");
+			if (joined) return joined;
+			return String(value.name || value.title || "");
+		}
+		return String(value || "");
+	};
+
+	// A project description is stronger when it carries numbers or impact verbs.
+	const hasImpactMetrics = (description) => {
+		const text = String(description || "");
+		return /\d/.test(text) || /\b(increased|reduced|improved|boosted|cut|grew|rose|saved|lowered|shipped|scaled|faster|by)\b/i.test(text);
+	};
 
 	return (
 		<SectionCard
@@ -156,8 +215,11 @@ export default function ResumeAnalyzer({ targetCareer = "AI Engineer" }) {
 						disabled={isAnalyzing}
 						className="inline-flex h-11 items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 px-5 text-sm font-semibold text-slate-950 transition hover:brightness-110 disabled:opacity-70"
 					>
-						{isAnalyzing ? "Analyzing…" : "Analyze resume"}
+						{isAnalyzing ? "Analyzing…" : "Analyze with AI"}
 					</button>
+					<p className="text-xs leading-5 text-slate-500">
+						Results update live as you type. Click <span className="text-slate-400">Analyze with AI</span> to enrich them with the model (name, projects, certifications).
+					</p>
 				</div>
 
 				<div className="space-y-4">
@@ -229,12 +291,12 @@ export default function ResumeAnalyzer({ targetCareer = "AI Engineer" }) {
 
 			{analysis && extractedSections ? (
 				<div className="mt-6 grid gap-4 md:grid-cols-3">
-					{analysis.projects?.length ? (
+					{projectsList.length ? (
 						<div className="rounded-3xl border border-white/10 bg-white/5 p-4">
 							<p className="text-sm font-semibold text-slate-200">Projects</p>
 							<div className="mt-3 flex flex-wrap gap-2">
-								{analysis.projects.map(item => (
-									<Badge key={item} tone="slate">{item}</Badge>
+								{projectsList.map(project => (
+									<Badge key={project.title} tone="slate">{project.title}</Badge>
 								))}
 							</div>
 						</div>
@@ -243,9 +305,10 @@ export default function ResumeAnalyzer({ targetCareer = "AI Engineer" }) {
 						<div className="rounded-3xl border border-white/10 bg-white/5 p-4">
 							<p className="text-sm font-semibold text-slate-200">Education</p>
 							<ul className="mt-3 space-y-1.5 text-sm leading-6 text-slate-300">
-								{analysis.education.map(item => (
-									<li key={item}>{item}</li>
-								))}
+								{analysis.education.map((item, index) => {
+									const text = toDisplayString(item);
+									return <li key={`${index}-${text}`}>{text}</li>;
+								})}
 							</ul>
 						</div>
 					) : null}
@@ -253,12 +316,37 @@ export default function ResumeAnalyzer({ targetCareer = "AI Engineer" }) {
 						<div className="rounded-3xl border border-white/10 bg-white/5 p-4">
 							<p className="text-sm font-semibold text-slate-200">Certifications</p>
 							<ul className="mt-3 space-y-1.5 text-sm leading-6 text-slate-300">
-								{analysis.certifications.map(item => (
-									<li key={item}>{item}</li>
-								))}
+								{analysis.certifications.map((item, index) => {
+									const text = toDisplayString(item);
+									return <li key={`${index}-${text}`}>{text}</li>;
+								})}
 							</ul>
 						</div>
 					) : null}
+				</div>
+			) : null}
+
+			{analysis && projectsList.length > 0 ? (
+				<div className="mt-6 rounded-3xl border border-white/10 bg-white/5 p-4">
+					<p className="text-sm font-semibold text-slate-200">Project insights</p>
+					<p className="mt-1 text-xs leading-5 text-slate-400">Descriptions feed your analysis — strong ones state what you built and the measurable outcome.</p>
+					<div className="mt-3 space-y-3">
+						{projectsList.map(project => (
+							<div key={project.title} className="rounded-2xl border border-white/10 bg-slate-950/60 p-3">
+								<div className="flex flex-wrap items-center justify-between gap-2">
+									<p className="text-sm font-semibold text-white">{project.title}</p>
+									{project.description && !hasImpactMetrics(project.description) ? (
+										<Badge tone="rose">Add impact metrics</Badge>
+									) : null}
+								</div>
+								{project.description ? (
+									<p className="mt-1.5 text-sm leading-6 text-slate-300">{project.description}</p>
+								) : (
+									<p className="mt-1.5 text-sm text-amber-200/80">Add a one-line description of what you built and the outcome.</p>
+								)}
+							</div>
+						))}
+					</div>
 				</div>
 			) : null}
 		</SectionCard>

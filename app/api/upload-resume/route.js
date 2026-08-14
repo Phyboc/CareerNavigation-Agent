@@ -44,7 +44,10 @@ export async function POST(request) {
     let aiResult = null;
     try {
       const candidate = await generateResumeAnalysis(text, career, requiredSkills);
-      if (candidate && typeof candidate === 'object' && Array.isArray(candidate.detectedSkills)) {
+      // Accept the AI result as long as it's an object – even if a field is
+      // missing, the deterministic scan and heuristics fill the gaps. (The
+      // provider already coerces every field to a safe default.)
+      if (candidate && typeof candidate === 'object' && !Array.isArray(candidate)) {
         aiResult = candidate;
       }
     } catch (e) {
@@ -55,8 +58,8 @@ export async function POST(request) {
     const sections = extractResumeSections(text);
 
     // Merge heuristic sections with whatever the model found. Projects are
-    // fuzzy-deduped because the heuristic captures full bullet lines while the
-    // model often returns shortened titles for the same project.
+    // fuzzy-deduped and returned as { title, description } – titles drive the
+    // form prefill, descriptions feed the analysis view.
     const projects = dedupeProjects([...(sections.projects || []), ...(aiResult?.projects || [])]);
     const education = [...new Set([...(sections.education || []), ...(aiResult?.education || [])])];
     const certifications = [...new Set([...(sections.certifications || []), ...(aiResult?.certifications || [])])];
@@ -65,7 +68,7 @@ export async function POST(request) {
       JSON.stringify({
         success: true,
         data: {
-          name: sections.name || '',
+          name: sections.name || aiResult?.name || '',
           detectedSkills: merged.detectedSkills,
           strengths: merged.strengths,
           missingSkills: merged.missingSkills,
@@ -73,6 +76,7 @@ export async function POST(request) {
           careerFit: merged.careerFit,
           matchScore: merged.matchScore,
           projects,
+          projectTitles: projects.map(project => project.title),
           education,
           certifications,
           fullText: text
