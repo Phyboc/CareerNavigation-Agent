@@ -1,9 +1,30 @@
 export default function LoadingState({ message = "Analyzing your profile..." }) {
 	return (
-		<div className="rounded-[28px] border border-cyan-400/20 bg-cyan-400/10 px-5 py-4 shadow-[0_16px_40px_rgba(8,145,178,0.12)]">
-			<div className="flex items-center gap-3">
-				<div className="h-5 w-5 animate-spin rounded-full border-2 border-cyan-300 border-t-transparent" />
-				<p className="text-sm leading-6 text-cyan-50">{message}</p>
+		<div className="space-y-4">
+			<p className="text-xs font-medium tracking-wide text-cyan-200/80">{message}</p>
+			<div className="rounded-[28px] border border-white/10 bg-white/5 p-6 backdrop-blur">
+				<div className="flex items-center justify-between gap-4">
+					<div className="skeleton h-8 w-48 rounded-full" />
+					<div className="skeleton h-8 w-20 rounded-full" />
+				</div>
+				<div className="skeleton mt-6 h-2.5 w-full rounded-full" />
+				<div className="mt-5 grid gap-3 sm:grid-cols-3">
+					<div className="space-y-2.5">
+						<div className="skeleton h-3 w-2/3 rounded-full" />
+						<div className="skeleton h-2.5 w-full rounded-full" />
+						<div className="skeleton h-2.5 w-4/5 rounded-full" />
+					</div>
+					<div className="space-y-2.5">
+						<div className="skeleton h-3 w-1/2 rounded-full" />
+						<div className="skeleton h-2.5 w-full rounded-full" />
+						<div className="skeleton h-2.5 w-3/5 rounded-full" />
+					</div>
+					<div className="space-y-2.5">
+						<div className="skeleton h-3 w-2/3 rounded-full" />
+						<div className="skeleton h-2.5 w-full rounded-full" />
+						<div className="skeleton h-2.5 w-2/3 rounded-full" />
+					</div>
+				</div>
 			</div>
 		</div>
 	);

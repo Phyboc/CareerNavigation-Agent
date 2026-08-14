@@ -4,7 +4,7 @@ export default function CareerJourneyPreview() {
 	return (
 		<section className="glass-panel rounded-[32px] p-6 sm:p-8 md:p-10 transition duration-300 hover:border-cyan-500/20">
 			<div className="text-center">
-				<p className="text-xs font-semibold uppercase tracking-[0.32em] text-cyan-400 font-display">Career Journey</p>
+				<p className="text-sm font-medium tracking-wide text-cyan-200">Career journey</p>
 				<h2 className="mt-3 font-display text-3xl font-bold text-white sm:text-4xl">Progress from student to industry ready</h2>
 				<p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-slate-400">
 					Your readiness score maps to a clear progression path so you always know where you stand.

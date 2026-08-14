@@ -12,10 +12,12 @@ export default function CareerMatches({ matches = [], selectedCareer = "" }) {
 			<div className="mt-6 grid gap-6 lg:grid-cols-3">
 				{matches.length > 0 ? matches.map((match, index) => {
 					const isTarget = match.career === selectedCareer;
+					// Editorial stagger: middle card sits lower, last card lower still.
+					const stagger = index === 1 ? "lg:translate-y-4" : index === 2 ? "lg:translate-y-8" : "";
 					return (
 						<article
 							key={match.career}
-							className={`group rounded-3xl border p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_45px_-12px_rgba(6,182,212,0.15)] ${
+							className={`group rounded-3xl border p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_45px_-12px_rgba(6,182,212,0.15)] ${stagger} ${
 								isTarget
 									? "border-cyan-500/30 bg-cyan-500/5 shadow-[0_10px_30px_rgba(6,182,212,0.05)]"
 									: "border-white/5 bg-slate-900/10 hover:border-cyan-500/20 hover:bg-slate-900/20"
@@ -78,9 +80,9 @@ export default function CareerMatches({ matches = [], selectedCareer = "" }) {
 								</div>
 
 								{isTarget ? (
-									<div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/10 px-4 py-2.5 text-center text-xs font-bold uppercase tracking-widest text-cyan-300">
-										Selected Target Career
-									</div>
+								<div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/10 px-4 py-2.5 text-center text-xs font-semibold text-cyan-300">
+									Selected target career
+								</div>
 								) : null}
 							</div>
 						</article>

@@ -69,7 +69,8 @@ export async function POST(request) {
         aiResult = candidate;
       }
     } catch (e) {
-      console.warn('AI resume analysis failed, using static results:', e);
+      // Fallback is by design – log a short line, not the full error body.
+      console.warn('AI resume analysis unavailable (%s); using static results', e.message || e);
     }
 
     const merged = mergeResumeAnalysis(staticAnalysis, aiResult);

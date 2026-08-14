@@ -28,12 +28,8 @@ export default function Footer() {
 						</p>
 					</div>
 				</div>
-				<div className="mt-10 border-t border-white/5 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+				<div className="mt-10 border-t border-white/5 pt-6 text-center text-xs text-slate-500">
 					<p>© {new Date().getFullYear()} CareerCompass AI. All rights reserved.</p>
-					<div className="flex gap-4">
-						<Link href="#" className="hover:text-slate-300 transition">Privacy Policy</Link>
-						<Link href="#" className="hover:text-slate-300 transition">Terms of Service</Link>
-					</div>
 				</div>
 			</div>
 		</footer>

@@ -23,8 +23,8 @@ export default function Testimonials() {
 	return (
 		<section className="py-6">
 			<div className="text-center">
-				<p className="text-xs font-semibold uppercase tracking-[0.32em] text-cyan-400 font-display">Testimonials</p>
-				<h2 className="mt-3 font-display text-3xl font-bold text-white sm:text-4xl">What our students say</h2>
+				<p className="text-sm font-medium tracking-wide text-cyan-200">Student stories</p>
+				<h2 className="mt-3 font-display text-3xl font-bold text-white sm:text-4xl">What students say</h2>
 			</div>
 			<div className="mt-10 grid gap-6 md:grid-cols-3">
 				{testimonials.map(item => (
@@ -34,7 +34,7 @@ export default function Testimonials() {
 					>
 						<p className="text-sm leading-relaxed text-slate-300 italic">&ldquo;{item.quote}&rdquo;</p>
 						<footer className="mt-6 border-t border-white/5 pt-4 flex items-center gap-3">
-							<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-blue-500 font-display text-sm font-bold text-slate-950">
+							<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-cyan-600 font-display text-sm font-bold text-slate-950">
 								{item.initials}
 							</div>
 							<div>

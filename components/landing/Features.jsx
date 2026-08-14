@@ -65,8 +65,8 @@ export default function Features() {
 	return (
 		<section id="features" className="scroll-mt-24">
 			<div className="text-center">
-				<p className="text-xs font-semibold uppercase tracking-[0.32em] text-cyan-400 font-display">Features</p>
-				<h2 className="mt-3 font-display text-3xl font-bold text-white sm:text-4xl">Navigate your career with confidence</h2>
+				<p className="text-sm font-medium tracking-wide text-cyan-200">Features</p>
+				<h2 className="mt-3 font-display text-3xl font-bold text-white sm:text-4xl">Know your next step before you take it</h2>
 				<p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-slate-400">
 					CareerCompass AI compiles candidate profiles, identifies missing alignments, and generates study plans.
 				</p>
@@ -75,7 +75,7 @@ export default function Features() {
 				{features.map((feature, idx) => (
 					<article
 						key={feature.title}
-						className={`rounded-3xl border border-white/5 bg-slate-900/20 p-6 sm:p-8 transition-all duration-300 hover:-translate-y-1 hover:border-cyan-500/25 hover:bg-slate-900/40 hover:shadow-[0_15px_35px_rgba(6,182,212,0.08)] ${feature.spanClass || ""}`}
+						className={`rounded-3xl border border-white/5 bg-slate-900/20 p-6 sm:p-8 transition-all duration-300 hover:border-cyan-500/25 hover:bg-slate-900/40 hover:shadow-[0_15px_35px_rgba(6,182,212,0.08)] ${feature.spanClass || ""}`}
 					>
 						<span className="flex h-11 w-11 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-400">
 							{feature.icon}

@@ -10,7 +10,7 @@ export default function ReadinessScore({
 		<section className="rounded-[32px] glass-panel p-6 sm:p-8 transition duration-300 hover:border-cyan-500/20 hover:shadow-[0_20px_50px_-12px_rgba(6,182,212,0.15)]">
 			<div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
 				<div className="space-y-2">
-					<p className="text-xs font-semibold uppercase tracking-[0.32em] text-cyan-400 font-display">Readiness Assessment</p>
+					<p className="text-sm font-medium tracking-wide text-cyan-200">Readiness assessment</p>
 					<h3 className="font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">Career readiness score</h3>
 					<p className="max-w-2xl text-sm leading-relaxed text-slate-400">Your readiness score combines skill matches, candidate project portfolio evidence, and target study consistency parameters.</p>
 				</div>
@@ -42,7 +42,7 @@ export default function ReadinessScore({
 					<span className="font-mono text-sm text-cyan-300 font-bold">{loading ? "Analyzing..." : `${score}%`}</span>
 				</div>
 				<div className="h-2.5 overflow-hidden rounded-full bg-white/5 border border-white/5">
-					<div className={`h-full rounded-full bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 transition-all duration-1000 ease-out ${loading ? "animate-pulse" : ""}`} style={{ width: `${Math.max(0, Math.min(100, displayScore))}%` }} />
+					<div className={`h-full rounded-full bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 transition-all duration-1000 ease-out ${loading ? "animate-pulse" : ""}`} style={{ width: `${Math.max(0, Math.min(100, displayScore))}%` }} />
 				</div>
 			</div>
 

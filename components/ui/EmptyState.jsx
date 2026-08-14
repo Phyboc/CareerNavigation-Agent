@@ -12,7 +12,7 @@ export default function EmptyState({ title = "No analysis yet", description, act
 			</p>
 			<Link
 				href={actionHref}
-				className="mt-6 inline-flex h-11 items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 px-6 text-sm font-semibold text-slate-950 transition hover:brightness-110"
+				className="mt-6 inline-flex h-11 items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-cyan-600 px-6 text-sm font-semibold text-slate-950 transition hover:brightness-110"
 			>
 				{actionLabel}
 			</Link>

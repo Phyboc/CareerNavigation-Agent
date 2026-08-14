@@ -18,15 +18,17 @@ export default function ProjectRecommendations({ careerGoal = "AI Engineer", pro
 			title={`Project ideas for ${careerGoal}`}
 			description="Build confidence step by step with projects at every difficulty level."
 		>
-			<div className="mt-6 grid gap-4 lg:grid-cols-3">
+			<div className="mt-6 grid gap-4 lg:grid-cols-12">
 				{tiers.map(tierKey => {
 					const config = tierConfig[tierKey];
 					const project = projects[tierKey];
+					// Asymmetric 2+1 layout: beginner wide, intermediate narrow, advanced full-width.
+					const span = tierKey === "beginner" ? "lg:col-span-7" : tierKey === "intermediate" ? "lg:col-span-5" : "lg:col-span-12";
 
 					if (!project) {
 						return (
-							<article key={tierKey} className="rounded-3xl border border-dashed border-white/10 bg-white/5 p-5 text-sm text-slate-400">
-								<p className={`text-xs font-semibold uppercase tracking-[0.22em] ${config.labelClass}`}>{config.label}</p>
+							<article key={tierKey} className={`rounded-3xl border border-dashed border-white/10 bg-white/5 p-5 text-sm text-slate-400 ${span}`}>
+								<p className={`text-xs font-semibold tracking-wide ${config.labelClass}`}>{config.label}</p>
 								<p className="mt-3">No {config.label.toLowerCase()} project available.</p>
 							</article>
 						);
@@ -35,7 +37,7 @@ export default function ProjectRecommendations({ careerGoal = "AI Engineer", pro
 					return (
                         <article
                             key={tierKey}
-                            className="rounded-3xl border border-white/10 bg-white/5 p-5 transition duration-200 hover:-translate-y-1 hover:border-cyan-400/20 hover:shadow-[0_18px_40px_rgba(8,145,178,0.12)] flex flex-col h-full justify-between"
+                            className={`rounded-3xl border border-white/10 bg-white/5 p-5 transition duration-200 hover:border-cyan-400/20 hover:shadow-[0_18px_40px_rgba(8,145,178,0.12)] flex flex-col h-full justify-between ${span}`}
                         >
 							<div className="flex items-center justify-between gap-3">
 								<Badge tone={config.tone}>{project.difficulty || config.label}</Badge>

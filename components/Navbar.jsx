@@ -21,7 +21,7 @@ export default function Navbar() {
 		<header className="sticky top-0 z-50 border-b border-white/5 bg-slate-950/70 backdrop-blur-md">
 			<div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
 				<Link href="/" className="flex items-center gap-3">
-					<span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-blue-500 font-display text-sm font-black text-slate-950 shadow-[0_0_20px_rgba(6,182,212,0.3)]">
+					<span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-cyan-600 font-display text-sm font-black text-slate-950 shadow-[0_0_20px_rgba(6,182,212,0.3)]">
 						CC
 					</span>
 					<div>
@@ -49,7 +49,7 @@ export default function Navbar() {
 					})}
 					<Link
 						href="/analysis"
-						className="ml-3 inline-flex h-10 items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 px-5 text-sm font-semibold text-slate-950 shadow-[0_4px_20px_rgba(6,182,212,0.25)] transition duration-200 hover:brightness-110 active:scale-[0.98] active:translate-y-[0.5px]"
+						className="ml-3 inline-flex h-10 items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-cyan-600 px-5 text-sm font-semibold text-slate-950 shadow-[0_4px_20px_rgba(6,182,212,0.25)] transition duration-200 hover:brightness-110 active:scale-[0.98] active:translate-y-[0.5px]"
 					>
 						View Analysis
 					</Link>
@@ -96,7 +96,7 @@ export default function Navbar() {
 						<Link
 							href="/analysis"
 							onClick={() => setOpen(false)}
-							className="mt-2 inline-flex h-11 items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 px-4 text-sm font-semibold text-slate-950 shadow-[0_4px_15px_rgba(6,182,212,0.25)]"
+							className="mt-2 inline-flex h-11 items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-cyan-600 px-4 text-sm font-semibold text-slate-950 shadow-[0_4px_15px_rgba(6,182,212,0.25)]"
 						>
 							View Analysis
 						</Link>

@@ -94,7 +94,7 @@ export default function ChatAgent() {
 								<div
 									className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-6 whitespace-pre-wrap ${
 										isUser
-											? "rounded-br-md bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950"
+											? "rounded-br-md bg-gradient-to-r from-cyan-400 to-cyan-600 text-slate-950"
 											: "rounded-bl-md border border-white/10 bg-white/5 text-slate-200"
 									}`}
 								>
@@ -140,7 +140,7 @@ export default function ChatAgent() {
 						type="button"
 						onClick={handleSend}
 						disabled={sending || !input.trim()}
-						className="inline-flex h-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 px-5 text-sm font-semibold text-slate-950 transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+						className="inline-flex h-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-cyan-600 px-5 text-sm font-semibold text-slate-950 transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
 					>
 						{sending ? "Sending…" : "Send"}
 					</button>

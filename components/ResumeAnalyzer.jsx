@@ -213,7 +213,7 @@ export default function ResumeAnalyzer({ targetCareer = "AI Engineer" }) {
 						type="button"
 						onClick={handleAnalyze}
 						disabled={isAnalyzing}
-						className="inline-flex h-11 items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 px-5 text-sm font-semibold text-slate-950 transition hover:brightness-110 disabled:opacity-70"
+						className="inline-flex h-11 items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-cyan-600 px-5 text-sm font-semibold text-slate-950 transition hover:brightness-110 disabled:opacity-70"
 					>
 						{isAnalyzing ? "Analyzing…" : "Analyze with AI"}
 					</button>
@@ -225,7 +225,7 @@ export default function ResumeAnalyzer({ targetCareer = "AI Engineer" }) {
 				<div className="space-y-4">
 					{analysis ? (
 						<div className="rounded-3xl border border-cyan-400/20 bg-cyan-400/10 p-4 text-center">
-							<p className="text-xs uppercase tracking-wider text-slate-400">Career Fit</p>
+							<p className="text-xs font-medium tracking-wide text-slate-400">Career fit</p>
 							<Badge tone={fitTones[analysis.careerFit] || "slate"} className="mt-2 text-base">
 								{analysis.careerFit}
 							</Badge>

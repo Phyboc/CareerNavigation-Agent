@@ -1,8 +1,8 @@
 const problems = [
-	"Choosing a career path with clarity and data-backed confidence",
-	"Understanding actual readiness and missing credentials for target roles",
-	"Identifying critical skill gaps early in the learning journey",
-	"Creating structured, day-by-day learning schedules that fit personal hours"
+	"Not knowing which role actually fits their skills and interests",
+	"No sense of real readiness or the credentials target roles expect",
+	"Discovering skill gaps only after interviews go wrong",
+	"Struggling to turn a broad goal into a day-by-day study schedule"
 ];
 
 const solutions = [
@@ -16,8 +16,8 @@ export default function WhyCareerCompass() {
 	return (
 		<section id="why" className="scroll-mt-24 glass-panel rounded-[32px] p-6 sm:p-10 transition duration-300 hover:border-cyan-500/20">
 			<div className="text-center">
-				<p className="text-xs font-semibold uppercase tracking-[0.32em] text-cyan-400 font-display">Why CareerCompass AI?</p>
-				<h2 className="mt-3 font-display text-3xl font-bold text-white sm:text-4xl">Built for students who want clarity</h2>
+				<p className="text-sm font-medium tracking-wide text-cyan-200">Why CareerCompass AI?</p>
+				<h2 className="mt-3 font-display text-3xl font-bold text-white sm:text-4xl">Built for students who want direction</h2>
 			</div>
 			<div className="mt-10 grid gap-6 lg:grid-cols-2">
 				<div className="rounded-3xl border border-rose-500/10 bg-rose-500/5 p-6 sm:p-8 hover:border-rose-500/25 transition duration-300">

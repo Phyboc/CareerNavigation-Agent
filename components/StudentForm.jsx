@@ -115,7 +115,7 @@ export default function StudentForm({ onAnalyze, loading = false }) {
 		<form onSubmit={handleSubmit} className="rounded-[32px] border border-white/5 bg-slate-950/40 p-6 shadow-[0_30px_80px_rgba(3,7,18,0.4)] backdrop-blur-md sm:p-8">
 			<div className="flex flex-col gap-5 border-b border-white/5 pb-6 lg:flex-row lg:items-center lg:justify-between">
 				<div>
-					<p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-400 font-display">Assessment Form</p>
+					<p className="text-sm font-medium tracking-wide text-cyan-200">Assessment form</p>
 					<h2 className="mt-1 font-display text-2xl font-bold text-white tracking-tight">Tell us about yourself</h2>
 					<p className="mt-1.5 text-sm leading-relaxed text-slate-400">Upload a resume to pre-fill your profile details below automatically.</p>
 				</div>
@@ -130,7 +130,7 @@ export default function StudentForm({ onAnalyze, loading = false }) {
 						</div>
 					) : extracted ? (
 						<div className="rounded-2xl border border-white/5 bg-white/5 px-4 py-2 text-sm text-slate-300">
-							<div className="font-bold font-display text-xs text-cyan-400 uppercase tracking-wider">Extracted</div>
+							<div className="text-xs font-semibold text-cyan-200">Extracted</div>
 							<div className="text-xs text-slate-400 mt-0.5">Skills: {Array.isArray(extracted.detectedSkills) ? extracted.detectedSkills.slice(0, 3).join(', ') : '—'}</div>
 						</div>
 					) : null}
@@ -139,28 +139,28 @@ export default function StudentForm({ onAnalyze, loading = false }) {
 
 			<div className="mt-6 grid gap-5 md:grid-cols-2">
 				<div className="flex flex-col gap-2 text-sm text-slate-300">
-					<span className="font-semibold tracking-wide text-slate-200">Full Name</span>
-					<input value={form.name} onChange={handleChange("name")} placeholder="e.g. Sivasubramani" className="w-full rounded-2xl border border-white/5 bg-white/5 px-4 py-3 outline-none transition placeholder:text-slate-600 font-medium focus:border-cyan-500/40 focus:bg-white/10" required />
+					<label htmlFor="student-name" className="font-semibold tracking-wide text-slate-200">Full Name</label>
+					<input id="student-name" value={form.name} onChange={handleChange("name")} placeholder="e.g. Sivasubramani" className="w-full rounded-2xl border border-white/5 bg-white/5 px-4 py-3 outline-none transition placeholder:text-slate-600 font-medium focus:border-cyan-500/40 focus:bg-white/10" required />
 				</div>
 
 				<div className="flex flex-col gap-2 text-sm text-slate-300">
-					<span className="font-semibold tracking-wide text-slate-200">Degree & Education</span>
-					<input value={form.degree} onChange={handleChange("degree")} placeholder="e.g. B.Tech CSE" className="w-full rounded-2xl border border-white/5 bg-white/5 px-4 py-3 outline-none transition placeholder:text-slate-600 font-medium focus:border-cyan-500/40 focus:bg-white/10" required />
+					<label htmlFor="student-degree" className="font-semibold tracking-wide text-slate-200">Degree & Education</label>
+					<input id="student-degree" value={form.degree} onChange={handleChange("degree")} placeholder="e.g. B.Tech CSE" className="w-full rounded-2xl border border-white/5 bg-white/5 px-4 py-3 outline-none transition placeholder:text-slate-600 font-medium focus:border-cyan-500/40 focus:bg-white/10" required />
 				</div>
 
 				<div className="flex flex-col gap-2 text-sm text-slate-300 md:col-span-2">
-					<span className="font-semibold tracking-wide text-slate-200">Current Skills (comma separated)</span>
-					<textarea value={form.skills} onChange={handleChange("skills")} rows={3} placeholder="e.g. Python, Java, DSA, Git, SQL" className="w-full rounded-2xl border border-white/5 bg-white/5 px-4 py-3 outline-none transition placeholder:text-slate-600 font-medium focus:border-cyan-500/40 focus:bg-white/10" required />
+					<label htmlFor="student-skills" className="font-semibold tracking-wide text-slate-200">Current Skills (comma separated)</label>
+					<textarea id="student-skills" value={form.skills} onChange={handleChange("skills")} rows={3} placeholder="e.g. Python, Java, DSA, Git, SQL" className="w-full rounded-2xl border border-white/5 bg-white/5 px-4 py-3 outline-none transition placeholder:text-slate-600 font-medium focus:border-cyan-500/40 focus:bg-white/10" required />
 				</div>
 
 				<div className="flex flex-col gap-2 text-sm text-slate-300 md:col-span-2">
-					<span className="font-semibold tracking-wide text-slate-200">Projects (comma separated)</span>
-					<textarea value={form.projects} onChange={handleChange("projects")} rows={3} placeholder="e.g. ATM System, Drowsiness Detection System" className="w-full rounded-2xl border border-white/5 bg-white/5 px-4 py-3 outline-none transition placeholder:text-slate-600 font-medium focus:border-cyan-500/40 focus:bg-white/10" required />
+					<label htmlFor="student-projects" className="font-semibold tracking-wide text-slate-200">Projects (comma separated)</label>
+					<textarea id="student-projects" value={form.projects} onChange={handleChange("projects")} rows={3} placeholder="e.g. ATM System, Drowsiness Detection System" className="w-full rounded-2xl border border-white/5 bg-white/5 px-4 py-3 outline-none transition placeholder:text-slate-600 font-medium focus:border-cyan-500/40 focus:bg-white/10" required />
 				</div>
 
 				<div className="flex flex-col gap-2 text-sm text-slate-300">
-					<span className="font-semibold tracking-wide text-slate-200">Career Goal Target</span>
-					<select value={form.goal} onChange={handleChange("goal")} className="w-full rounded-2xl border border-white/5 bg-white/5 px-4 py-3 outline-none transition font-medium focus:border-cyan-500/40 focus:bg-white/10">
+					<label htmlFor="student-goal" className="font-semibold tracking-wide text-slate-200">Career Goal Target</label>
+					<select id="student-goal" value={form.goal} onChange={handleChange("goal")} className="w-full rounded-2xl border border-white/5 bg-white/5 px-4 py-3 outline-none transition font-medium focus:border-cyan-500/40 focus:bg-white/10">
 						<option>AI Engineer</option>
 						<option>Software Engineer</option>
 						<option>Data Scientist</option>
@@ -169,8 +169,8 @@ export default function StudentForm({ onAnalyze, loading = false }) {
 				</div>
 
 				<div className="flex flex-col gap-2 text-sm text-slate-300">
-					<span className="font-semibold tracking-wide text-slate-200">Study Hours Per Day</span>
-					<input type="number" min="1" max="12" value={form.hours} onChange={handleChange("hours")} className="w-full rounded-2xl border border-white/5 bg-white/5 px-4 py-3 outline-none transition placeholder:text-slate-600 font-medium focus:border-cyan-500/40 focus:bg-white/10" required />
+					<label htmlFor="student-hours" className="font-semibold tracking-wide text-slate-200">Study Hours Per Day</label>
+					<input id="student-hours" type="number" min="1" max="12" value={form.hours} onChange={handleChange("hours")} className="w-full rounded-2xl border border-white/5 bg-white/5 px-4 py-3 outline-none transition placeholder:text-slate-600 font-medium focus:border-cyan-500/40 focus:bg-white/10" required />
 				</div>
 			</div>
 
@@ -187,7 +187,7 @@ export default function StudentForm({ onAnalyze, loading = false }) {
 			) : null}
 
 			<div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center">
-				<button type="submit" disabled={loading} className="inline-flex h-12 items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 via-cyan-500 to-blue-500 px-8 text-sm font-semibold text-slate-950 shadow-[0_4px_20px_rgba(6,182,212,0.25)] transition hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70">
+				<button type="submit" disabled={loading} className="inline-flex h-12 items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 px-8 text-sm font-semibold text-slate-950 shadow-[0_4px_20px_rgba(6,182,212,0.25)] transition hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70">
 					{loading ? "Analyzing Profile Details..." : "Run Career Assessment"}
 				</button>
 				<p className="text-xs text-slate-500">Your information will be securely cached in your local session store.</p>

@@ -26,7 +26,7 @@ export default function AnalysisPage() {
 		<div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
 			<div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
 				<div>
-					<p className="text-xs font-semibold uppercase tracking-[0.32em] text-cyan-300">Analysis</p>
+					<p className="text-xs font-medium tracking-wide text-cyan-200">Analysis</p>
 					<h1 className="mt-2 text-3xl font-semibold text-white sm:text-4xl">Your Career Analysis</h1>
 					<p className="mt-3 max-w-2xl text-sm leading-7 text-slate-400">
 						Readiness score, career matches, skill gaps, and AI mentor insights for {analysis.profile?.name || "your profile"}.
@@ -54,7 +54,7 @@ export default function AnalysisPage() {
 			{history.length > 0 ? (
 				<div className="rounded-[28px] border border-white/10 bg-white/5 p-5">
 					<div className="flex flex-wrap items-center justify-between gap-3">
-						<p className="text-xs font-semibold uppercase tracking-[0.32em] text-cyan-300">Progress</p>
+						<p className="text-xs font-medium tracking-wide text-cyan-200">Progress</p>
 						{history.length > 1 ? (
 							<p className="text-xs text-slate-400">
 								Last assessed: {new Date(history[history.length - 1].savedAt).toLocaleDateString()}

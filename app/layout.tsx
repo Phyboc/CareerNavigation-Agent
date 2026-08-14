@@ -24,6 +24,11 @@ const outfit = Outfit({
 export const metadata: Metadata = {
 	title: "CareerCompass AI — Your Personal AI Career Mentor",
 	description: "Discover your ideal career path, close skill gaps, and build a roadmap for success with AI-powered guidance.",
+	openGraph: {
+		title: "CareerCompass AI — Your Personal AI Career Mentor",
+		description: "Analyze your skills, gauge your projects, and get a personalized AI career roadmap.",
+		type: "website"
+	}
 };
 
 export default function RootLayout({
@@ -34,13 +39,20 @@ export default function RootLayout({
 	return (
 		<html
 			lang="en"
+			data-scroll-behavior="smooth"
 			className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable} h-full antialiased`}
 			suppressHydrationWarning={true}
 		>
 			<body className="flex min-h-full flex-col bg-slate-950 text-slate-100">
+				<a
+					href="#main"
+					className="fixed left-4 top-4 z-50 -translate-y-16 rounded-full border border-cyan-400/30 bg-slate-950 px-4 py-2 text-sm font-semibold text-cyan-200 transition focus:translate-y-0"
+				>
+					Skip to content
+				</a>
 				<AnalysisProvider>
 					<Navbar />
-					<main className="flex-1">{children}</main>
+					<main id="main" className="flex-1">{children}</main>
 					<Footer />
 				</AnalysisProvider>
 			</body>

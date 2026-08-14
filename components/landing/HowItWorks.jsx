@@ -9,8 +9,8 @@ export default function HowItWorks() {
 	return (
 		<section id="how-it-works" className="scroll-mt-24">
 			<div className="text-center">
-				<p className="text-xs font-semibold uppercase tracking-[0.32em] text-cyan-400 font-display">How It Works</p>
-				<h2 className="mt-3 font-display text-3xl font-bold text-white sm:text-4xl">Four steps to career clarity</h2>
+				<p className="text-sm font-medium tracking-wide text-cyan-200">How it works</p>
+				<h2 className="mt-3 font-display text-3xl font-bold text-white sm:text-4xl">Four steps from profile to plan</h2>
 			</div>
 			<div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
 				{steps.map(item => (
@@ -18,7 +18,7 @@ export default function HowItWorks() {
 						key={item.step}
 						className="glass-card rounded-[28px] p-6 transition-all duration-300 hover:border-cyan-500/20 hover:shadow-[0_15px_30px_rgba(6,182,212,0.06)]"
 					>
-						<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-blue-500 font-display text-sm font-black text-slate-950 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+						<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-cyan-600 font-display text-sm font-black text-slate-950 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
 							{item.step}
 						</div>
 						<h3 className="mt-5 font-display text-lg font-bold text-white leading-snug">{item.title}</h3>

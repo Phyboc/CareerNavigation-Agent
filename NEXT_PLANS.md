@@ -7,6 +7,8 @@ roadmap/resources): **IMPLEMENTED and verified** — see chat history.
 
 ## Item 4 — Full UI redesign
 
+**Status: IMPLEMENTED and verified live (see chat history).** Remaining optional: `motion` scroll animations, custom favicon asset, README copy updates.
+
 ### Packages needed: NONE required
 - **Tailwind CSS v4** is already installed and configured (`globals.css` uses `@import "tailwindcss"` + `@theme`).
 - Fonts already load via `next/font` (`Geist`, `Geist_Mono`, `Outfit`).
