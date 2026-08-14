@@ -58,7 +58,7 @@ export default function StudentForm({ onAnalyze, loading = false }) {
 				const skills = Array.isArray(data.detectedSkills) ? data.detectedSkills.join(", ") : form.skills;
 				const projects = Array.isArray(data.projects) ? data.projects.join(", ") : form.projects;
 				const degree = data.education && data.education.length ? data.education[0] : form.degree;
-				setForm(prev => ({ ...prev, skills, projects, degree, resumeText: data.fullText || prev.resumeText }));
+				setForm(prev => ({ ...prev, name: data.name || prev.name, skills, projects, degree, resumeText: data.fullText || prev.resumeText }));
 				setExtracted(data);
 			} else {
 				setUploadError(payload.error || "Could not read that file. Try a text or PDF resume.");

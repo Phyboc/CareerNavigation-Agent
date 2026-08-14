@@ -1,40 +1,8 @@
-import { analyzeResumeText } from '../../../lib/analyzer';
+import { analyzeResumeText, getRequiredSkills, mergeResumeAnalysis } from '../../../lib/analyzer';
 import { generateResumeAnalysis } from '../../../lib/aiProvider';
+import { extractResumeSections } from '../../../lib/resumeExtractor';
 
 export const runtime = 'nodejs';
-
-// Enrichment heuristics: pull out projects, education, and certifications that the
-// LLM output shape does not cover. Kept deliberately simple and lossless.
-function extractResumeSections(text = '') {
-  const projects = [];
-  const education = [];
-  const certifications = [];
-  const lower = String(text || '').split(/\r?\n/).map(line => line.trim());
-
-  for (const line of lower) {
-    const projectLine = line.match(/projects?:?\s*(.+)/i);
-    if (projectLine && projectLine[1]) {
-      projects.push(...projectLine[1].split(/[,;]| and /).map(item => item.trim()).filter(Boolean));
-    }
-    // Lines that mention "project" and contain a list of items
-    if (/project/i.test(line) && line.includes(',')) {
-      projects.push(...line.split(/[,;]| and /).map(item => item.trim()).filter(Boolean));
-    }
-    if (/b\.?tech|bachelor|m\.?tech|m\.?sc|b\.sc|bsc|msc|degree/i.test(line)) {
-      education.push(line);
-    }
-    if (/certif|certificate|aws certified|google certified|microsoft certified/i.test(line)) {
-      certifications.push(line);
-    }
-  }
-
-  return {
-    // Dedupe while preserving order: the same line can match both heuristics.
-    projects: [...new Set(projects.map(project => project.replace(/^projects?:/i, '').trim()).filter(Boolean))],
-    education,
-    certifications
-  };
-}
 
 export async function POST(request) {
   try {
@@ -67,36 +35,44 @@ export async function POST(request) {
       );
     }
 
-    // AI-first analysis (server-side, so GROQ_API_KEY stays out of the browser),
-    // falling back to the deterministic keyword analyzer when the model call fails.
-    let resumeAnalysis;
+    // Deterministic keyword analysis is the source of truth for scoring. The AI
+    // result (when available) only enriches the detected skills on top of it,
+    // and missing skills / score are always recomputed against the required list.
+    const staticAnalysis = analyzeResumeText(text, career);
+    const requiredSkills = getRequiredSkills(career);
+
+    let aiResult = null;
     try {
-      const aiResult = await generateResumeAnalysis(text, career);
-      if (aiResult && typeof aiResult === 'object' && Array.isArray(aiResult.detectedSkills)) {
-        resumeAnalysis = aiResult;
+      const candidate = await generateResumeAnalysis(text, career, requiredSkills);
+      if (candidate && typeof candidate === 'object' && Array.isArray(candidate.detectedSkills)) {
+        aiResult = candidate;
       }
     } catch (e) {
-      console.warn('AI resume analysis failed, using static fallback:', e);
-    }
-    if (!resumeAnalysis) {
-      resumeAnalysis = analyzeResumeText(text, career);
+      console.warn('AI resume analysis failed, using static results:', e);
     }
 
+    const merged = mergeResumeAnalysis(staticAnalysis, aiResult);
     const sections = extractResumeSections(text);
+
+    // Merge heuristic sections with whatever the model found, deduping.
+    const projects = [...new Set([...(sections.projects || []), ...(aiResult?.projects || [])])];
+    const education = [...new Set([...(sections.education || []), ...(aiResult?.education || [])])];
+    const certifications = [...new Set([...(sections.certifications || []), ...(aiResult?.certifications || [])])];
 
     return new Response(
       JSON.stringify({
         success: true,
         data: {
-          detectedSkills: Array.isArray(resumeAnalysis.detectedSkills) ? resumeAnalysis.detectedSkills : [],
-          strengths: Array.isArray(resumeAnalysis.strengths) ? resumeAnalysis.strengths : [],
-          missingSkills: Array.isArray(resumeAnalysis.missingSkills) ? resumeAnalysis.missingSkills : [],
-          suggestions: resumeAnalysis.suggestions || [],
-          careerFit: resumeAnalysis.careerFit || 'N/A',
-          matchScore: resumeAnalysis.matchScore || 0,
-          projects: sections.projects,
-          education: sections.education,
-          certifications: sections.certifications,
+          name: sections.name || '',
+          detectedSkills: merged.detectedSkills,
+          strengths: merged.strengths,
+          missingSkills: merged.missingSkills,
+          suggestions: merged.suggestions,
+          careerFit: merged.careerFit,
+          matchScore: merged.matchScore,
+          projects,
+          education,
+          certifications,
           fullText: text
         }
       }),

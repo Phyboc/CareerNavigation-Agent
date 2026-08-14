@@ -8,33 +8,32 @@ import Badge from "./ui/Badge";
 
 export default function AIMentorInsights({ analysis }) {
 	const [mentor, setMentor] = useState(null);
-	const [failed, setFailed] = useState(false);
 
 	useEffect(() => {
 		if (!analysis) return;
 		let cancelled = false;
 
 		async function loadInsights() {
+			// AI mentor insights are generated server-side so GROQ_API_KEY never
+			// reaches the browser. Any failure falls back to deterministic static
+			// text without surfacing an error – the fallback always renders.
+			let payload = null;
 			try {
-				// AI mentor insights are generated server-side so GROQ_API_KEY never
-				// reaches the browser. The route already falls back to static text
-				// when the model call fails.
-				const payload = await fetchJson("/api/mentor-insights", {
+				payload = await fetchJson("/api/mentor-insights", {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({ analysis }),
-					timeoutMs: 20000
+					timeoutMs: 30000
 				});
-				if (!cancelled && payload?.success) {
-					setMentor(payload);
-					return;
-				}
-				throw new Error(payload?.error || "Mentor insights request failed");
 			} catch (err) {
-				// Network failure fallback: deterministic static text, computed locally
-				// (no API key is available client-side, so no AI attempt is made).
-				console.error("Error loading mentor insights, using static fallback:", err);
-				if (!cancelled) setMentor(buildStaticMentorInsights(analysis));
+				console.warn("Mentor insights unavailable, showing static guidance:", err.message);
+			}
+			if (!cancelled) {
+				setMentor(
+					payload?.success && Array.isArray(payload.paragraphs)
+						? payload
+						: buildStaticMentorInsights(analysis)
+				);
 			}
 		}
 
@@ -48,8 +47,8 @@ export default function AIMentorInsights({ analysis }) {
 
 	const paragraphs = mentor?.paragraphs ?? [];
 	const highlight = mentor?.highlight ?? {};
-	// Derived loading state: loading until we have insights or definitively failed.
-	const loadingInsights = !failed && mentor === null;
+	// Loading until the first response (AI or static) arrives.
+	const loadingInsights = mentor === null;
 
 	return (
 		<SectionCard
