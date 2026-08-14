@@ -1,6 +1,6 @@
 import { analyzeResumeText, getRequiredSkills, mergeResumeAnalysis } from '../../../lib/analyzer';
 import { generateResumeAnalysis } from '../../../lib/aiProvider';
-import { extractResumeSections } from '../../../lib/resumeExtractor';
+import { extractResumeSections, dedupeProjects } from '../../../lib/resumeExtractor';
 
 export const runtime = 'nodejs';
 
@@ -54,8 +54,10 @@ export async function POST(request) {
     const merged = mergeResumeAnalysis(staticAnalysis, aiResult);
     const sections = extractResumeSections(text);
 
-    // Merge heuristic sections with whatever the model found, deduping.
-    const projects = [...new Set([...(sections.projects || []), ...(aiResult?.projects || [])])];
+    // Merge heuristic sections with whatever the model found. Projects are
+    // fuzzy-deduped because the heuristic captures full bullet lines while the
+    // model often returns shortened titles for the same project.
+    const projects = dedupeProjects([...(sections.projects || []), ...(aiResult?.projects || [])]);
     const education = [...new Set([...(sections.education || []), ...(aiResult?.education || [])])];
     const certifications = [...new Set([...(sections.certifications || []), ...(aiResult?.certifications || [])])];
 
