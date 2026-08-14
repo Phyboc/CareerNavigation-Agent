@@ -1,16 +1,19 @@
 import { NextResponse } from "next/server";
 
-import { analyzeCareerProfile } from "../../../lib/analyzer";
+import { buildAnalysis } from "../../../lib/analyzer";
 
-export async function POST(request) {		try {
-			const body = await request.json();
-			// analyzeCareerProfile is async (it may run the resume-AI step), so it must be awaited.
-			const analysis = await analyzeCareerProfile(body);
+// Fast path: deterministic analysis only, no LLM round-trip. When the form
+// includes resume text, the client fires /api/analyze/enrich in the background
+// to merge AI-detected skills, so results render immediately.
+export async function POST(request) {
+	try {
+		const body = await request.json();
+		const analysis = buildAnalysis(body);
 
-			return NextResponse.json({
-				success: true,
-				...analysis
-			});
+		return NextResponse.json({
+			success: true,
+			...analysis
+		});
 	} catch (error) {
 		return NextResponse.json(
 			{

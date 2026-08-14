@@ -1,9 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { buildMentorInsights } from "../lib/mentorInsights";
+import { buildStaticMentorInsights } from "../lib/mentorInsightsStatic";
+import { fetchJson } from "../lib/apiClient";
 import SectionCard from "./ui/SectionCard";
-import Badge from "./ui/Badge";	export default function AIMentorInsights({ analysis }) {
+import Badge from "./ui/Badge";
+
+export default function AIMentorInsights({ analysis }) {
 	const [mentor, setMentor] = useState(null);
 	const [failed, setFailed] = useState(false);
 
@@ -16,28 +19,22 @@ import Badge from "./ui/Badge";	export default function AIMentorInsights({ analy
 				// AI mentor insights are generated server-side so GROQ_API_KEY never
 				// reaches the browser. The route already falls back to static text
 				// when the model call fails.
-				const response = await fetch("/api/mentor-insights", {
+				const payload = await fetchJson("/api/mentor-insights", {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ analysis })
+					body: JSON.stringify({ analysis }),
+					timeoutMs: 20000
 				});
-				const payload = await response.json();
-				if (!cancelled && response.ok && payload?.success) {
+				if (!cancelled && payload?.success) {
 					setMentor(payload);
 					return;
 				}
 				throw new Error(payload?.error || "Mentor insights request failed");
 			} catch (err) {
-				// Network failure fallback: build static insights locally (no API key
-				// is available client-side, so this is deterministic text only).
+				// Network failure fallback: deterministic static text, computed locally
+				// (no API key is available client-side, so no AI attempt is made).
 				console.error("Error loading mentor insights, using static fallback:", err);
-				try {
-					const fallback = await buildMentorInsights(analysis);
-					if (!cancelled) setMentor(fallback);
-				} catch (fallbackError) {
-					console.error("Static mentor insights fallback failed:", fallbackError);
-					if (!cancelled) setFailed(true);
-				}
+				if (!cancelled) setMentor(buildStaticMentorInsights(analysis));
 			}
 		}
 

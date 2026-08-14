@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 
 import { analyzeResumeText } from "../lib/analyzer";
+import { fetchJson } from "../lib/apiClient";
 import Badge from "./ui/Badge";
 import ProgressBar from "./ui/ProgressBar";
 import SectionCard from "./ui/SectionCard";
@@ -22,13 +23,13 @@ const fitTones = {
 // Run resume analysis through the server so AI (Groq) is used when available,
 // with the deterministic keyword analyzer as a fallback.
 async function analyzeResumeViaServer(text, career) {
-	const response = await fetch(`/api/upload-resume?career=${encodeURIComponent(career)}`, {
+	const payload = await fetchJson(`/api/upload-resume?career=${encodeURIComponent(career)}`, {
 		method: "POST",
 		headers: { "Content-Type": "text/plain" },
-		body: text
+		body: text,
+		timeoutMs: 25000
 	});
-	const payload = await response.json();
-	if (!response.ok || !payload.success) {
+	if (!payload.success) {
 		throw new Error(payload.error || "Resume analysis failed");
 	}
 	return payload.data;
@@ -74,13 +75,13 @@ export default function ResumeAnalyzer({ targetCareer = "AI Engineer" }) {
 		setError("");
 		try {
 			const arrayBuffer = await file.arrayBuffer();
-			const response = await fetch(`/api/upload-resume?career=${encodeURIComponent(targetCareer)}`, {
+			const payload = await fetchJson(`/api/upload-resume?career=${encodeURIComponent(targetCareer)}`, {
 				method: "POST",
 				headers: { "Content-Type": file.type || "application/pdf" },
-				body: arrayBuffer
+				body: arrayBuffer,
+				timeoutMs: 30000
 			});
-			const payload = await response.json();
-			if (!response.ok || !payload.success) {
+			if (!payload.success) {
 				throw new Error(payload.error || "Resume upload failed");
 			}
 			const data = payload.data || {};

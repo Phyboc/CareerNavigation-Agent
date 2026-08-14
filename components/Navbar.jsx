@@ -9,7 +9,8 @@ const navItems = [
 	{ href: "/assessment", label: "Assessment" },
 	{ href: "/resume", label: "Resume Analyzer" },
 	{ href: "/roadmap", label: "Roadmap" },
-	{ href: "/projects", label: "Projects" }
+	{ href: "/projects", label: "Projects" },
+	{ href: "/chat", label: "AI Chat" }
 ];
 
 export default function Navbar() {

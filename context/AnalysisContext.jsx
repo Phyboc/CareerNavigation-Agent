@@ -5,6 +5,7 @@ import { createContext, useContext, useSyncExternalStore, useState, useCallback 
 import { buildAnalysis } from "../lib/analyzer";
 import { sampleProfile } from "../lib/sampleProfile";
 import { downloadMarkdownReport } from "../lib/exportReport";
+import { fetchJson } from "../lib/apiClient";
 
 const STORAGE_KEY = "careercompass-analysis";
 
@@ -70,18 +71,34 @@ export function AnalysisProvider({ children }) {
 		setError("");
 
 		try {
-			const response = await fetch("/api/analyze", {
+			// Fast path: /api/analyze runs the deterministic engine and returns
+			// instantly, so the user sees results without waiting on the LLM.
+			const payload = await fetchJson("/api/analyze", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(formData)
+				body: JSON.stringify(formData),
+				timeoutMs: 15000
 			});
 
-			const payload = await response.json();
-			if (!response.ok || !payload.success) {
-				throw new Error(payload.error || "Analysis failed");
-			}
-
 			setAnalysisCache(payload);
+
+			// Background enrichment: when a resume was pasted, merge its
+			// AI-detected skills into the profile and update the cache in place.
+			// Not awaited – the user is already looking at deterministic results.
+			if (formData?.resumeText?.trim()) {
+				fetchJson("/api/analyze/enrich", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify(formData),
+					timeoutMs: 25000
+				})
+					.then(enriched => {
+						if (enriched?.success) setAnalysisCache(enriched);
+					})
+					.catch(err => {
+						console.warn("Background resume enrichment failed (deterministic results kept):", err);
+					});
+			}
 		} catch (caughtError) {
 			setError(caughtError instanceof Error ? caughtError.message : "Unable to analyze profile.");
 			setAnalysisCache(buildAnalysis(formData));

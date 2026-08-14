@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+
+import { fetchJson } from "../lib/apiClient";
 
 export default function StudentForm({ onAnalyze, loading = false }) {
 	const [form, setForm] = useState({
@@ -14,6 +16,8 @@ export default function StudentForm({ onAnalyze, loading = false }) {
 	});
 	const [uploading, setUploading] = useState(false);
 	const [extracted, setExtracted] = useState(null);
+	const [uploadError, setUploadError] = useState("");
+	const fileInputRef = useRef(null);
 
 	const handleChange = (field) => (event) => {
 		setForm(previous => ({
@@ -38,17 +42,18 @@ export default function StudentForm({ onAnalyze, loading = false }) {
 	async function uploadResumeFile(file) {
 		if (!file) return;
 		setUploading(true);
+		setUploadError("");
 		try {
 			const arrayBuffer = await file.arrayBuffer();
-			const res = await fetch(`/api/upload-resume?career=${encodeURIComponent(form.goal)}`, {
+			const payload = await fetchJson(`/api/upload-resume?career=${encodeURIComponent(form.goal)}`, {
 				method: "POST",
 				headers: {
 					"Content-Type": file.type || "application/pdf"
 				},
-				body: arrayBuffer
+				body: arrayBuffer,
+				timeoutMs: 30000
 			});
-			const payload = await res.json();
-			if (res.ok && payload.success) {
+			if (payload.success) {
 				const data = payload.data || {};
 				const skills = Array.isArray(data.detectedSkills) ? data.detectedSkills.join(", ") : form.skills;
 				const projects = Array.isArray(data.projects) ? data.projects.join(", ") : form.projects;
@@ -56,12 +61,16 @@ export default function StudentForm({ onAnalyze, loading = false }) {
 				setForm(prev => ({ ...prev, skills, projects, degree, resumeText: data.fullText || prev.resumeText }));
 				setExtracted(data);
 			} else {
-				console.warn("Upload resume failed", payload.error || payload);
+				setUploadError(payload.error || "Could not read that file. Try a text or PDF resume.");
 			}
 		} catch (e) {
 			console.error("Resume upload error", e);
+			setUploadError(e instanceof Error ? e.message : "Could not read that file. Try a text or PDF resume.");
 		} finally {
 			setUploading(false);
+			if (fileInputRef.current) {
+				fileInputRef.current.value = "";
+			}
 		}
 	}
 
@@ -74,11 +83,15 @@ export default function StudentForm({ onAnalyze, loading = false }) {
 					<p className="mt-1.5 text-sm leading-relaxed text-slate-400">Upload a resume to pre-fill your profile details below automatically.</p>
 				</div>
 				<div className="flex items-center gap-3.5">
-					<input id="resume-upload-input" type="file" accept="application/pdf,text/plain" onChange={(e) => uploadResumeFile(e.target.files?.[0])} className="hidden" />
+					<input ref={fileInputRef} id="resume-upload-input" type="file" accept="application/pdf,text/plain" onChange={(e) => uploadResumeFile(e.target.files?.[0])} className="hidden" />
 					<label htmlFor="resume-upload-input" className="inline-flex h-11 cursor-pointer items-center justify-center rounded-full border border-cyan-500/20 bg-cyan-500/10 px-5 text-sm font-semibold text-cyan-200 transition-all duration-200 hover:bg-cyan-500/20 active:scale-[0.98]">
 						{uploading ? "Processing PDF..." : "Upload resume (PDF)"}
 					</label>
-					{extracted ? (
+					{uploadError ? (
+						<div className="rounded-2xl border border-rose-400/20 bg-rose-400/10 px-4 py-2 text-sm text-rose-100">
+							{uploadError}
+						</div>
+					) : extracted ? (
 						<div className="rounded-2xl border border-white/5 bg-white/5 px-4 py-2 text-sm text-slate-300">
 							<div className="font-bold font-display text-xs text-cyan-400 uppercase tracking-wider">Extracted</div>
 							<div className="text-xs text-slate-400 mt-0.5">Skills: {Array.isArray(extracted.detectedSkills) ? extracted.detectedSkills.slice(0, 3).join(', ') : '—'}</div>
