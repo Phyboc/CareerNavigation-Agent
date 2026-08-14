@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useSyncExternalStore, useState, useCallback } from "react";
 
-import { analyzeCareerProfile } from "../lib/analyzer";
+import { buildAnalysis } from "../lib/analyzer";
 import { sampleProfile } from "../lib/sampleProfile";
 import { downloadMarkdownReport } from "../lib/exportReport";
 
@@ -10,7 +10,8 @@ const STORAGE_KEY = "careercompass-analysis";
 
 const AnalysisContext = createContext(null);
 
-const defaultAnalysis = analyzeCareerProfile(sampleProfile);
+// Deterministic, synchronous – never a Promise, so the store always holds data.
+const defaultAnalysis = buildAnalysis(sampleProfile);
 let analysisCache = defaultAnalysis;
 const listeners = new Set();
 
@@ -83,7 +84,7 @@ export function AnalysisProvider({ children }) {
 			setAnalysisCache(payload);
 		} catch (caughtError) {
 			setError(caughtError instanceof Error ? caughtError.message : "Unable to analyze profile.");
-			setAnalysisCache(analyzeCareerProfile(formData));
+			setAnalysisCache(buildAnalysis(formData));
 		} finally {
 			setLoading(false);
 		}

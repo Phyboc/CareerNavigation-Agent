@@ -13,7 +13,7 @@ export default function ResumePage() {
 				<p className="text-xs font-semibold uppercase tracking-[0.32em] text-cyan-300">Resume Analyzer</p>
 				<h1 className="mt-2 text-3xl font-semibold text-white sm:text-4xl">Analyze Your Resume</h1>
 				<p className="mt-3 max-w-2xl text-sm leading-7 text-slate-400">
-					Paste your resume text to detect strengths, missing skills, and career fit for your target role.
+					Upload a PDF or paste your resume text to detect strengths, missing skills, and career fit for your target role.
 				</p>
 			</div>
 
