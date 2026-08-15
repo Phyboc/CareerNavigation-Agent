@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { fetchJson } from "../lib/apiClient";
 import { buildAnalysis, getRequiredSkills } from "../lib/analyzer";
+import { careerPaths } from "../lib/careerPaths";
 
 export default function StudentForm({ onAnalyze, loading = false, prefill = null }) {
 	const [form, setForm] = useState(() => ({
@@ -161,10 +162,9 @@ export default function StudentForm({ onAnalyze, loading = false, prefill = null
 				<div className="flex flex-col gap-2 text-sm text-slate-300">
 					<label htmlFor="student-goal" className="font-semibold tracking-wide text-slate-200">Career Goal Target</label>
 					<select id="student-goal" value={form.goal} onChange={handleChange("goal")} className="w-full rounded-2xl border border-slate-700/25 bg-white px-4 py-3 outline-none transition font-medium focus:border-cyan-600/50">
-						<option>AI Engineer</option>
-						<option>Software Engineer</option>
-						<option>Data Scientist</option>
-						<option>Full Stack Developer</option>
+						{Object.keys(careerPaths).map(career => (
+							<option key={career}>{career}</option>
+						))}
 					</select>
 				</div>
 
