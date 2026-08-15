@@ -26,6 +26,8 @@ Status of completed work (see chat history for details and verification):
 - **Phase 6 — Progress-aware guidance**: score `history` is sent with chat requests; the mentor references improvement/decline ("up from 42% to 61%").
 - **Phase 7 — Expanded career map**: 4 → 10 paths (added Data Analyst, DevOps Engineer, Backend Engineer, Mobile Developer, Cybersecurity Analyst, Cloud Engineer) with resources, project recommendations, and priority maps; goal select and intake goal validation are data-driven; the user's selected goal is always kept in the top-3 career matches.
 - **Phase 8 — Cleanup & branding**: `app/icon.svg` compass mark replaces the default favicon, dynamic `app/opengraph-image.tsx` for social shares, README refreshed.
+- **Chat resilience**: `/api/chat` now replies from a deterministic fallback (`lib/chatFallback.js`, grounded in the analysis) whenever the LLM is unavailable — no key, daily quota, timeout, or upstream error — instead of a dead-end 500; the client renders the JSON fallback as a normal message and surfaces the real cause (`details`) on genuine errors.
+- **Chat crash fix**: `summarizeAnalysis` and `buildChatFallback` both crashed with `Cannot read properties of null (reading 'profile')` when a chat request arrived without an `analysis` payload (user who hadn't completed an assessment). Both now tolerate missing/null analysis and the no-profile prompt path works again.
 
 ---
 

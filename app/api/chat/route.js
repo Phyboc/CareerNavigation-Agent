@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { callLLM, groqStreamToText } from "../../../lib/aiProvider";
+import { buildChatFallback } from "../../../lib/chatFallback";
 import { handleIntakeTurn } from "../../../lib/intake";
 import { clientIp, rateLimit, tooManyRequests } from "../../../lib/rateLimit";
 
@@ -11,7 +12,10 @@ const MAX_BODY_BYTES = 512 * 1024; // 512 KB – chat history + analysis summary
 const INTENTS = ["career", "resume", "study"];
 
 // Compact, grounded summary of the user's analysis used to personalize replies.
-function summarizeAnalysis(analysis = {}) {
+// Must tolerate a missing analysis (users who haven't completed an assessment
+// yet) – the original implementation crashed on null here.
+function summarizeAnalysis(analysis) {
+	if (!analysis || typeof analysis !== "object") return {};
 	const profile = analysis.profile || {};
 	const readiness = analysis.readiness || {};
 	const skillGap = analysis.skillGap || {};
@@ -71,7 +75,7 @@ function buildAgentPrompt(agent, analysis, progress = []) {
 	const common = `\n\n${grounded}\n\nGuidelines:\n- Answer in plain, helpful prose. Be concise: 2-5 sentences unless the question genuinely needs more.\n- Reference the user's own data when relevant. Never invent facts about the user that are not in the data above.\n- Do not return JSON or markdown tables – just natural conversational text.`;
 
 	const prompts = {
-		career: `You are CareerCompass AI, a friendly and practical AI career mentor for students.\n\nYour job is to guide the student's career journey: explain their readiness score, skill gaps, career matches, and what to work on next. Recommend the single best next step (see nextStep in the data) and, when useful, point them to an app page with a markdown link like [Roadmap](/roadmap), [Projects](/projects), [Resume analyzer](/resume), or [Assessment](/assessment). If progress history is present, acknowledge improvement or decline (e.g. \"up from 42% to 61%\").${common}`,
+		career: `You are CareerCompass AI, a friendly and practical AI career mentor for students.\n\nYour job is to guide the student's career journey: explain their readiness score, skill gaps, career matches, and what to work on next. Recommend the single best next step (see nextStep in the data) and, when useful, point them to an app page with a markdown link like [Roadmap](/roadmap), [Projects](/projects), [Resume analyzer](/resume), or [Assessment](/assessment). If progress history is present, acknowledge improvement or decline (e.g. "up from 42% to 61%").${common}`,
 		resume: `You are CareerCompass AI's resume reviewer.\n\nYour job is to critique the user's resume against their target role: evaluate bullet quality and impact metrics, spot weak or missing keywords, and give concrete rewrite suggestions. Use the resumeAnalysis (match score, detected/missing skills, suggestions, projects) when present; if there is no resume analysis yet, tell them to run the resume analyzer first.${common}`,
 		study: `You are CareerCompass AI's study planner.\n\nYour job is to turn the user's roadmap and weekly schedule into concrete, day-by-day study plans: what to learn, practice, and build each day, paced to their available hours. Use the roadmap phases and weekly schedule when present; if there is no roadmap yet, suggest completing the assessment first.${common}`
 	};
@@ -98,6 +102,8 @@ async function classifyIntent(lastUserMessage) {
 
 // Conversational endpoint. Classifies the intent, streams the specialist
 // agent's reply as plain-text chunks, and tags it with X-Agent for the UI.
+// When the LLM is unavailable (no key, quota, timeout, upstream error) the
+// route replies with a deterministic, grounded fallback instead of failing.
 export async function POST(request) {
 	// Rate limit: 20 chat messages per minute per client (an LLM call each).
 	const { limited, retryAfter } = rateLimit(`chat:${clientIp(request)}`, 20);
@@ -106,17 +112,19 @@ export async function POST(request) {
 	const contentLength = Number(request.headers.get("content-length") || 0);
 	if (contentLength > MAX_BODY_BYTES) {
 		return NextResponse.json({ success: false, error: "Payload too large." }, { status: 413 });
-	}		try {
-			const body = await request.json();
-			const messages = Array.isArray(body?.messages) ? body.messages.slice(-10) : [];
-			const analysis = body?.analysis && typeof body.analysis === "object" ? body.analysis : null;
+	}
 
-			// Conversational intake: a dedicated, non-streaming flow that builds
-			// the profile field by field (used by the assessment page builder).
-			if (body?.mode === "intake") {
-				const result = await handleIntakeTurn(messages, body?.profile);
-				return NextResponse.json({ success: true, ...result });
-			}
+	try {
+		const body = await request.json();
+		const messages = Array.isArray(body?.messages) ? body.messages.slice(-10) : [];
+		const analysis = body?.analysis && typeof body.analysis === "object" ? body.analysis : null;
+
+		// Conversational intake: a dedicated, non-streaming flow that builds
+		// the profile field by field (used by the assessment page builder).
+		if (body?.mode === "intake") {
+			const result = await handleIntakeTurn(messages, body?.profile);
+			return NextResponse.json({ success: true, ...result });
+		}
 
 		const progress = Array.isArray(body?.history)
 			? body.history.slice(-5).map(entry => ({
@@ -129,29 +137,49 @@ export async function POST(request) {
 		const lastUser = [...messages].reverse().find(message => message.role === "user")?.content || "";
 		const agent = await classifyIntent(lastUser);
 
-		// Streaming path: the model's tokens are forwarded as plain-text
-		// chunks (Groq SSE parsed server-side), so the mentor's reply
-		// appears as it is generated instead of after a long spinner.
-		const upstream = await callLLM("", "", {
-			messages: [
-				{ role: "system", content: buildAgentPrompt(agent, analysis, progress) },
-				...messages
-			],
-			maxTokens: 600,
-			temperature: 0.7,
-			raw: true,
-			stream: true
-		});
+		try {
+			// Streaming path: the model's tokens are forwarded as plain-text
+			// chunks (Groq SSE parsed server-side), so the mentor's reply
+			// appears as it is generated instead of after a long spinner.
+			const upstream = await callLLM("", "", {
+				messages: [
+					{ role: "system", content: buildAgentPrompt(agent, analysis, progress) },
+					...messages
+				],
+				maxTokens: 600,
+				temperature: 0.7,
+				raw: true,
+				stream: true
+			});
 
-		const stream = groqStreamToText(upstream.body);
-		return new Response(stream, {
-			headers: {
-				"Content-Type": "text/plain; charset=utf-8",
-				"Cache-Control": "no-cache, no-transform",
-				"X-Accel-Buffering": "no",
-				"X-Agent": agent
+			const stream = groqStreamToText(upstream.body);
+			return new Response(stream, {
+				headers: {
+					"Content-Type": "text/plain; charset=utf-8",
+					"Cache-Control": "no-cache, no-transform",
+					"X-Accel-Buffering": "no",
+					"X-Agent": agent
+				}
+			});
+		} catch (llmError) {
+			// AI unavailable – never leave the student hanging. Reply from the
+			// deterministic analysis instead of surfacing a dead-end error.
+			const reason = llmError instanceof Error ? llmError.message : String(llmError);
+			console.warn("AI chat unavailable (%s); using deterministic fallback", reason);
+			let reply = buildChatFallback(agent, analysis, messages);
+			// When the outage is recognisable (quota, timeout, missing key),
+			// say so instead of silently swapping in a different mode.
+			if (/quota|tokens per day|TPD|timed out|timeout|GROQ_API_KEY/i.test(reason)) {
+				reply += "\n\n(Note: AI is temporarily unavailable — this is a quick summary from your analysis.)";
 			}
-		});
+			return NextResponse.json({
+				success: true,
+				reply,
+				fallback: true,
+				agent,
+				reason
+			});
+		}
 	} catch (error) {
 		return NextResponse.json(
 			{

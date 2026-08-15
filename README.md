@@ -105,7 +105,7 @@ lib/
 
 - **Rate limits** apply per client (10–30 req/min depending on route) and uploads are capped at 15 MB / 300 KB of extracted text.
 - **AI is optional**: every AI call falls back to deterministic analysis. When Groq's daily token quota is hit, the app detects the 429, caches it, and serves static results instantly for the rest of the day.
-- **`/api/chat` streams**: the reply is sent as plain-text chunks (`text/plain`, `X-Agent` header tags the routing), the profile-builder mode (`mode: "intake"`) returns JSON.
+- **`/api/chat` streams**: the reply is sent as plain-text chunks (`text/plain`, `X-Agent` header tags the routing), the profile-builder mode (`mode: "intake"`) returns JSON. When the LLM is unavailable (no key, quota, timeout) the route returns a deterministic fallback reply grounded in the analysis instead of failing.
 
 ---
 

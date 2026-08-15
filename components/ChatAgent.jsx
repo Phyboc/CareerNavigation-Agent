@@ -149,14 +149,35 @@ export default function ChatAgent() {
 
 			if (!response.ok) {
 				let message = "The mentor could not reply. Try again.";
+				let details = "";
 				try {
 					const payload = await response.json();
 					if (payload?.error) message = payload.error;
+					if (payload?.details) details = payload.details;
 				} catch {
 					// non-JSON error body – keep the default message
 				}
-				throw new Error(message);
+				// Surface the real cause (missing key, quota, timeout…) so the
+				// user knows what to fix instead of a dead-end generic message.
+				throw new Error(details && details !== message ? `${message} (${details})` : message);
 			}
+
+			// When the AI is unavailable the route replies with a deterministic
+			// fallback as JSON – render it as a normal assistant message.
+			const contentType = response.headers.get("content-type") || "";
+			if (contentType.includes("application/json")) {
+				const payload = await response.json().catch(() => ({}));
+				const reply = typeof payload?.reply === "string" ? payload.reply.trim() : "";
+				if (!reply) {
+					throw new Error(payload?.error || "The mentor could not reply. Try again.");
+				}
+				setMessages(previous => [
+					...previous,
+					{ role: "assistant", agent: payload.agent || agentHeader, content: reply }
+				]);
+				return;
+			}
+
 			if (!response.body) {
 				throw new Error("Streaming is not supported by this browser.");
 			}
@@ -220,8 +241,9 @@ export default function ChatAgent() {
 					{messages.map((message, index) => {
 						const isUser = message.role === "user";
 						return (
-							<div key={`${message.role}-${index}`} className={`flex ${isUser ? "justify-end" : "justify-start"}`}>						<div className={isUser ? "flex max-w-[85%] flex-col items-end" : "max-w-[85%]"}>
-							{!isUser && message.agent ? (
+							<div key={`${message.role}-${index}`} className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
+							<div className={isUser ? "flex max-w-[85%] flex-col items-end" : "max-w-[85%]"}>
+								{!isUser && message.agent ? (
 								<span className="mb-1 inline-block rounded-full border border-cyan-600/25 bg-cyan-600/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-cyan-700">
 									{AGENT_LABELS[message.agent] || AGENT_LABELS.career}
 								</span>
