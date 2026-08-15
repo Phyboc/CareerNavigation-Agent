@@ -60,15 +60,18 @@ function summarizeAnalysis(analysis = {}) {
 	};
 }
 
-function buildAgentPrompt(agent, analysis) {
+function buildAgentPrompt(agent, analysis, progress = []) {
+	const summary = summarizeAnalysis(analysis);
+	// Score history lets the mentor acknowledge improvement over time.
+	if (progress.length > 0) summary.progress = progress;
 	const grounded = analysis && typeof analysis === "object" && analysis.profile
-		? `Here is the user's career profile and analysis to ground your answers:\n${JSON.stringify(summarizeAnalysis(analysis))}`
+		? `Here is the user's career profile and analysis to ground your answers:\n${JSON.stringify(summary)}`
 		: "The user has not completed an assessment yet, so give general guidance and encourage them to complete the assessment for personalized advice.";
 
 	const common = `\n\n${grounded}\n\nGuidelines:\n- Answer in plain, helpful prose. Be concise: 2-5 sentences unless the question genuinely needs more.\n- Reference the user's own data when relevant. Never invent facts about the user that are not in the data above.\n- Do not return JSON or markdown tables – just natural conversational text.`;
 
 	const prompts = {
-		career: `You are CareerCompass AI, a friendly and practical AI career mentor for students.\n\nYour job is to guide the student's career journey: explain their readiness score, skill gaps, career matches, and what to work on next. Recommend the single best next step (see nextStep in the data) and, when useful, point them to an app page with a markdown link like [Roadmap](/roadmap), [Projects](/projects), [Resume analyzer](/resume), or [Assessment](/assessment).${common}`,
+		career: `You are CareerCompass AI, a friendly and practical AI career mentor for students.\n\nYour job is to guide the student's career journey: explain their readiness score, skill gaps, career matches, and what to work on next. Recommend the single best next step (see nextStep in the data) and, when useful, point them to an app page with a markdown link like [Roadmap](/roadmap), [Projects](/projects), [Resume analyzer](/resume), or [Assessment](/assessment). If progress history is present, acknowledge improvement or decline (e.g. \"up from 42% to 61%\").${common}`,
 		resume: `You are CareerCompass AI's resume reviewer.\n\nYour job is to critique the user's resume against their target role: evaluate bullet quality and impact metrics, spot weak or missing keywords, and give concrete rewrite suggestions. Use the resumeAnalysis (match score, detected/missing skills, suggestions, projects) when present; if there is no resume analysis yet, tell them to run the resume analyzer first.${common}`,
 		study: `You are CareerCompass AI's study planner.\n\nYour job is to turn the user's roadmap and weekly schedule into concrete, day-by-day study plans: what to learn, practice, and build each day, paced to their available hours. Use the roadmap phases and weekly schedule when present; if there is no roadmap yet, suggest completing the assessment first.${common}`
 	};
@@ -115,15 +118,23 @@ export async function POST(request) {
 				return NextResponse.json({ success: true, ...result });
 			}
 
-			const lastUser = [...messages].reverse().find(message => message.role === "user")?.content || "";
-			const agent = await classifyIntent(lastUser);
+		const progress = Array.isArray(body?.history)
+			? body.history.slice(-5).map(entry => ({
+					savedAt: entry?.savedAt,
+					readinessScore: entry?.readinessScore,
+					goal: entry?.goal
+				}))
+			: [];
+
+		const lastUser = [...messages].reverse().find(message => message.role === "user")?.content || "";
+		const agent = await classifyIntent(lastUser);
 
 		// Streaming path: the model's tokens are forwarded as plain-text
 		// chunks (Groq SSE parsed server-side), so the mentor's reply
 		// appears as it is generated instead of after a long spinner.
 		const upstream = await callLLM("", "", {
 			messages: [
-				{ role: "system", content: buildAgentPrompt(agent, analysis) },
+				{ role: "system", content: buildAgentPrompt(agent, analysis, progress) },
 				...messages
 			],
 			maxTokens: 600,

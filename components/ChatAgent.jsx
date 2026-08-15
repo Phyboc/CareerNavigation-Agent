@@ -98,7 +98,7 @@ function loadStoredMessages() {
 }
 
 export default function ChatAgent() {
-	const { analysis } = useAnalysis();
+	const { analysis, history } = useAnalysis();
 	const [messages, setMessages] = useState(loadStoredMessages);
 	const [input, setInput] = useState("");
 	const [sending, setSending] = useState(false);
@@ -142,7 +142,7 @@ export default function ChatAgent() {
 			const response = await fetch("/api/chat", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ messages: nextMessages, analysis }),
+				body: JSON.stringify({ messages: nextMessages, analysis, history }),
 				signal: controller.signal
 			});
 			agentHeader = response.headers.get("x-agent") || "career";
