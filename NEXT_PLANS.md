@@ -28,6 +28,7 @@ Status of completed work (see chat history for details and verification):
 - **Phase 8 — Cleanup & branding**: `app/icon.svg` compass mark replaces the default favicon, dynamic `app/opengraph-image.tsx` for social shares, README refreshed.
 - **Chat resilience**: `/api/chat` now replies from a deterministic fallback (`lib/chatFallback.js`, grounded in the analysis) whenever the LLM is unavailable — no key, daily quota, timeout, or upstream error — instead of a dead-end 500; the client renders the JSON fallback as a normal message and surfaces the real cause (`details`) on genuine errors.
 - **Chat crash fix**: `summarizeAnalysis` and `buildChatFallback` both crashed with `Cannot read properties of null (reading 'profile')` when a chat request arrived without an `analysis` payload (user who hadn't completed an assessment). Both now tolerate missing/null analysis and the no-profile prompt path works again.
+- **Privacy + progress controls**: form placeholders, the default sample profile, and the sample resume now use an imaginary persona instead of the author's real name/skills/projects. Added a "Clear progress" button on `/analysis` (clears `careercompass-history`), and history snapshots are now recorded only on real assessments — the old mount effect silently re-added duplicate entries on every page visit (and fixed the `set-state-in-effect` lint error in `AnalysisContext`).
 
 ---
 

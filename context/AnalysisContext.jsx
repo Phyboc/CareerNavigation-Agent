@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useSyncExternalStore, useEffect, useState, useCallback } from "react";
+import { createContext, useContext, useSyncExternalStore, useState, useCallback } from "react";
 
 import { buildAnalysis } from "../lib/analyzer";
 import { sampleProfile } from "../lib/sampleProfile";
@@ -85,15 +85,28 @@ export function AnalysisProvider({ children }) {
 	// Readiness snapshots over time – lets users track progress across sessions.
 	const [history, setHistory] = useState(readHistory);
 
-	useEffect(() => {
-		if (!analysis || analysis === defaultAnalysis) return;
+	// Record a snapshot only when the user actually runs an assessment. This
+	// deliberately avoids a mount effect: page visits must not silently re-add
+	// duplicate history entries (which would make "Clear progress" pointless).
+	const recordHistory = useCallback((nextAnalysis) => {
+		if (!nextAnalysis || typeof nextAnalysis !== "object") return;
 		const entry = {
 			savedAt: Date.now(),
-			name: analysis.profile?.name || "Student",
-			goal: analysis.profile?.goal || "",
-			readinessScore: analysis.readiness?.score ?? 0
+			name: nextAnalysis.profile?.name || "Student",
+			goal: nextAnalysis.profile?.goal || "",
+			readinessScore: nextAnalysis.readiness?.score ?? 0
 		};
 		setHistory(previous => {
+			// Skip an exact repeat of the last snapshot (same inputs re-run).
+			const last = previous[previous.length - 1];
+			if (
+				last &&
+				last.name === entry.name &&
+				last.goal === entry.goal &&
+				last.readinessScore === entry.readinessScore
+			) {
+				return previous;
+			}
 			const next = [...previous, entry].slice(-MAX_HISTORY);
 			try {
 				localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
@@ -102,7 +115,7 @@ export function AnalysisProvider({ children }) {
 			}
 			return next;
 		});
-	}, [analysis]);
+	}, []);
 
 	const handleAnalyze = useCallback(async (formData) => {
 		setLoading(true);
@@ -119,6 +132,7 @@ export function AnalysisProvider({ children }) {
 			});
 
 			setAnalysisCache(payload);
+			recordHistory(payload);
 
 			// Background enrichment: when a resume was pasted, merge its
 			// AI-detected skills into the profile and update the cache in place.
@@ -139,11 +153,13 @@ export function AnalysisProvider({ children }) {
 			}
 		} catch (caughtError) {
 			setError(caughtError instanceof Error ? caughtError.message : "Unable to analyze profile.");
-			setAnalysisCache(buildAnalysis(formData));
+			const fallback = buildAnalysis(formData);
+			setAnalysisCache(fallback);
+			recordHistory(fallback);
 		} finally {
 			setLoading(false);
 		}
-	}, []);
+	}, [recordHistory]);
 
 	const exportReport = useCallback(async () => {
 		if (analysis) {
@@ -151,8 +167,21 @@ export function AnalysisProvider({ children }) {
 		}
 	}, [analysis]);
 
+	// Delete the saved progress history (score snapshots). The current analysis
+	// is kept – only the history is wiped.
+	const clearHistory = useCallback(() => {
+		try {
+			localStorage.removeItem(HISTORY_KEY);
+		} catch {
+			// storage may be unavailable
+		}
+		setHistory([]);
+	}, []);
+
 	return (
-		<AnalysisContext.Provider value={{ analysis, loading, error, handleAnalyze, exportReport, history, hydrated: true }}>
+		<AnalysisContext.Provider
+			value={{ analysis, loading, error, handleAnalyze, exportReport, history, clearHistory, hydrated: true }}
+		>
 			{children}
 		</AnalysisContext.Provider>
 	);

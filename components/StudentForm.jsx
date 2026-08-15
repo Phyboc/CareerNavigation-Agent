@@ -141,22 +141,22 @@ export default function StudentForm({ onAnalyze, loading = false, prefill = null
 			<div className="mt-6 grid gap-5 md:grid-cols-2">
 				<div className="flex flex-col gap-2 text-sm text-slate-300">
 					<label htmlFor="student-name" className="font-semibold tracking-wide text-slate-200">Full Name</label>
-					<input id="student-name" value={form.name} onChange={handleChange("name")} placeholder="e.g. Sivasubramani" className="w-full rounded-2xl border border-slate-700/25 bg-white px-4 py-3 outline-none transition placeholder:text-slate-500 font-medium focus:border-cyan-600/50" required />
+					<input id="student-name" value={form.name} onChange={handleChange("name")} placeholder="e.g. Alex Johnson" className="w-full rounded-2xl border border-slate-700/25 bg-white px-4 py-3 outline-none transition placeholder:text-slate-500 font-medium focus:border-cyan-600/50" required />
 				</div>
 
 				<div className="flex flex-col gap-2 text-sm text-slate-300">
 					<label htmlFor="student-degree" className="font-semibold tracking-wide text-slate-200">Degree & Education</label>
-					<input id="student-degree" value={form.degree} onChange={handleChange("degree")} placeholder="e.g. B.Tech CSE" className="w-full rounded-2xl border border-slate-700/25 bg-white px-4 py-3 outline-none transition placeholder:text-slate-500 font-medium focus:border-cyan-600/50" required />
+					<input id="student-degree" value={form.degree} onChange={handleChange("degree")} placeholder="e.g. B.Tech Computer Science" className="w-full rounded-2xl border border-slate-700/25 bg-white px-4 py-3 outline-none transition placeholder:text-slate-500 font-medium focus:border-cyan-600/50" required />
 				</div>
 
 				<div className="flex flex-col gap-2 text-sm text-slate-300 md:col-span-2">
 					<label htmlFor="student-skills" className="font-semibold tracking-wide text-slate-200">Current Skills (comma separated)</label>
-					<textarea id="student-skills" value={form.skills} onChange={handleChange("skills")} rows={3} placeholder="e.g. Python, Java, DSA, Git, SQL" className="w-full rounded-2xl border border-slate-700/25 bg-white px-4 py-3 outline-none transition placeholder:text-slate-500 font-medium focus:border-cyan-600/50" required />
+					<textarea id="student-skills" value={form.skills} onChange={handleChange("skills")} rows={3} placeholder="e.g. JavaScript, React, SQL, Git" className="w-full rounded-2xl border border-slate-700/25 bg-white px-4 py-3 outline-none transition placeholder:text-slate-500 font-medium focus:border-cyan-600/50" required />
 				</div>
 
 				<div className="flex flex-col gap-2 text-sm text-slate-300 md:col-span-2">
 					<label htmlFor="student-projects" className="font-semibold tracking-wide text-slate-200">Projects (comma separated)</label>
-					<textarea id="student-projects" value={form.projects} onChange={handleChange("projects")} rows={3} placeholder="e.g. ATM System, Drowsiness Detection System" className="w-full rounded-2xl border border-slate-700/25 bg-white px-4 py-3 outline-none transition placeholder:text-slate-500 font-medium focus:border-cyan-600/50" required />
+					<textarea id="student-projects" value={form.projects} onChange={handleChange("projects")} rows={3} placeholder="e.g. Weather Dashboard, Chat App" className="w-full rounded-2xl border border-slate-700/25 bg-white px-4 py-3 outline-none transition placeholder:text-slate-500 font-medium focus:border-cyan-600/50" required />
 				</div>
 
 				<div className="flex flex-col gap-2 text-sm text-slate-300">

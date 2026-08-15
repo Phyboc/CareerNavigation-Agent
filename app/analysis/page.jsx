@@ -13,7 +13,7 @@ import Reveal from "../../components/ui/Reveal";
 import { useAnalysis } from "../../context/AnalysisContext";
 
 export default function AnalysisPage() {
-	const { analysis, loading, error, history } = useAnalysis();
+	const { analysis, loading, error, history, clearHistory } = useAnalysis();
 
 	if (!analysis) {
 		return (
@@ -76,11 +76,24 @@ export default function AnalysisPage() {
 				<div className="rounded-[28px] border border-slate-700/25 bg-white/80 p-5">
 					<div className="flex flex-wrap items-center justify-between gap-3">
 						<p className="text-xs font-medium tracking-wide text-cyan-700">Progress</p>
-						{history.length > 1 ? (
-							<p className="text-xs text-slate-400">
-								Last assessed: {new Date(history[history.length - 1].savedAt).toLocaleDateString()}
-							</p>
-						) : null}
+						<div className="flex items-center gap-3">
+							{history.length > 1 ? (
+								<p className="text-xs text-slate-400">
+									Last assessed: {new Date(history[history.length - 1].savedAt).toLocaleDateString()}
+								</p>
+							) : null}
+							<button
+								type="button"
+								onClick={() => {
+									if (window.confirm("Delete your saved progress history? This cannot be undone.")) {
+										clearHistory();
+									}
+								}}
+								className="inline-flex items-center gap-1 rounded-full border border-rose-600/25 bg-rose-600/10 px-3 py-1 text-xs font-medium text-rose-700 transition hover:bg-rose-600/20"
+							>
+								Clear progress
+							</button>
+						</div>
 					</div>
 					<div className="mt-3 flex flex-wrap gap-2">
 						{[...history].reverse().slice(0, 10).map((entry, index) => (

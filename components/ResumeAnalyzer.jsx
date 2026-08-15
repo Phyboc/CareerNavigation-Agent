@@ -9,9 +9,9 @@ import ProgressBar from "./ui/ProgressBar";
 import SectionCard from "./ui/SectionCard";
 
 const initialText = `Summary
-Built a Drowsiness Detection System using Python and machine learning.
-Skills: Python, Java, Git, MySQL
-Projects: personal AI project, college assignments
+Built a Weather Dashboard using React and a weather API.
+Skills: JavaScript, React, SQL, Git
+Projects: Weather Dashboard, e-commerce landing page
 `;
 
 const fitTones = {
