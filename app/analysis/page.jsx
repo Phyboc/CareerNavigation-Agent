@@ -44,6 +44,26 @@ export default function AnalysisPage() {
 				</div>
 			</div>
 
+			{analysis.nextStep ? (
+				<Reveal>
+					<div className="flex flex-col gap-4 rounded-[28px] border border-cyan-600/25 bg-gradient-to-br from-cyan-600/10 via-cyan-600/5 to-transparent p-6 sm:flex-row sm:items-center sm:justify-between">
+						<div>
+							<p className="text-xs font-medium uppercase tracking-wide text-cyan-700">Your next move</p>
+							<h2 className="mt-1 font-display text-xl font-bold tracking-tight text-slate-100">
+								{analysis.nextStep.title}
+							</h2>
+							<p className="mt-1 text-sm leading-6 text-slate-400">{analysis.nextStep.description}</p>
+						</div>
+						<Link
+							href={analysis.nextStep.href}
+							className="inline-flex h-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 to-cyan-700 px-6 text-sm font-semibold text-white shadow-[0_4px_20px_rgba(15,118,110,0.25)] transition hover:brightness-110 dark:from-cyan-600 dark:to-cyan-900"
+						>
+							{analysis.nextStep.action} →
+						</Link>
+					</div>
+				</Reveal>
+			) : null}
+
 			{loading ? <LoadingState /> : null}
 
 			{error ? (

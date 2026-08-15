@@ -5,16 +5,16 @@ import { useEffect, useRef, useState } from "react";
 import { fetchJson } from "../lib/apiClient";
 import { buildAnalysis, getRequiredSkills } from "../lib/analyzer";
 
-export default function StudentForm({ onAnalyze, loading = false }) {
-	const [form, setForm] = useState({
-		name: "",
-		degree: "",
-		skills: "",
-		projects: "",
-		goal: "AI Engineer",
-		hours: "2",
+export default function StudentForm({ onAnalyze, loading = false, prefill = null }) {
+	const [form, setForm] = useState(() => ({
+		name: prefill?.name || "",
+		degree: prefill?.degree || "",
+		skills: prefill?.skills || "",
+		projects: prefill?.projects || "",
+		goal: prefill?.goal || "AI Engineer",
+		hours: prefill?.hours || "2",
 		resumeText: ""
-	});
+	}));
 	const [uploading, setUploading] = useState(false);
 	const [extracted, setExtracted] = useState(null);
 	const [uploadError, setUploadError] = useState("");

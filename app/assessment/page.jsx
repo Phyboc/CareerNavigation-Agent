@@ -1,18 +1,45 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import StudentForm from "../../components/StudentForm";
+import ProfileBuilder from "../../components/ProfileBuilder";
 import LoadingState from "../../components/ui/LoadingState";
 import { useAnalysis } from "../../context/AnalysisContext";
 
 export default function AssessmentPage() {
 	const { handleAnalyze, loading, error } = useAnalysis();
 	const router = useRouter();
+	// "form" = quick assessment form, "chat" = mentor-guided profile builder.
+	const [mode, setMode] = useState("form");
+	const [prefill, setPrefill] = useState(null);
+	const [prefillKey, setPrefillKey] = useState(0);
 
 	const onAnalyze = async (formData) => {
 		await handleAnalyze(formData);
 		router.push("/analysis");
+	};
+
+	// The chat builder finished: prefill the form with the collected profile,
+	// then run the analysis right away (existing plumbing).
+	const onIntakeComplete = async (profile) => {
+		const formData = {
+			name: profile.name || "",
+			degree: profile.degree || "",
+			skills: profile.skills || "",
+			projects: profile.projects || "",
+			resumeText: "",
+			goal: profile.goal || "AI Engineer",
+			hoursPerDay: Number(profile.hoursPerDay) || 1
+		};
+		setPrefill({
+			...formData,
+			hours: String(formData.hoursPerDay)
+		});
+		setPrefillKey(key => key + 1);
+		setMode("form");
+		await onAnalyze(formData);
 	};
 
 	return (
@@ -25,6 +52,31 @@ export default function AssessmentPage() {
 				</p>
 			</div>
 
+			<div className="flex w-full max-w-sm items-center gap-1 rounded-full border border-slate-700/25 bg-white p-1">
+				<button
+					type="button"
+					onClick={() => setMode("form")}
+					className={`flex-1 rounded-full px-4 py-2 text-sm font-medium transition ${
+						mode === "form"
+							? "bg-gradient-to-r from-cyan-500 to-cyan-700 text-white shadow"
+							: "text-slate-300 hover:bg-slate-900"
+					}`}
+				>
+					Quick form
+				</button>
+				<button
+					type="button"
+					onClick={() => setMode("chat")}
+					className={`flex-1 rounded-full px-4 py-2 text-sm font-medium transition ${
+						mode === "chat"
+							? "bg-gradient-to-r from-cyan-500 to-cyan-700 text-white shadow"
+							: "text-slate-300 hover:bg-slate-900"
+					}`}
+				>
+					Chat with mentor
+				</button>
+			</div>
+
 			{loading ? <LoadingState message="Analyzing your profile and generating insights..." /> : null}
 
 			{error ? (
@@ -33,7 +85,11 @@ export default function AssessmentPage() {
 				</div>
 			) : null}
 
-			<StudentForm onAnalyze={onAnalyze} loading={loading} />
+			{mode === "form" ? (
+				<StudentForm key={prefillKey} prefill={prefill} onAnalyze={onAnalyze} loading={loading} />
+			) : (
+				<ProfileBuilder onComplete={onIntakeComplete} />
+			)}
 		</div>
 	);
 }
