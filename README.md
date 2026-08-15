@@ -31,6 +31,11 @@ CareerCompass AI solves these challenges through intelligent analysis, personali
 | **Skill Gap Analysis** | Existing, missing, and priority skills with visual breakdown |
 | **AI Mentor Insights** | Natural language guidance generated from your profile (Groq-powered) |
 | **AI Mentor Chat** | Conversational career mentor grounded in your profile, roadmap, and gaps |
+| **Streaming Replies** | Mentor answers appear token-by-token as they are generated (Groq SSE) |
+| **Multi-Agent Routing** | An intent classifier routes questions to a career mentor, resume reviewer, or study planner |
+| **Conversational Intake** | Build your profile by chatting — the mentor asks one question at a time and pre-fills the assessment |
+| **Next-Step Navigation** | A deterministic "Your next move" guides you to the single best action (assess → gaps → projects → resume → apply) |
+| **Progress-Aware Mentor** | The chat remembers your score history and acknowledges improvement over time |
 | **Resume Analyzer** | Upload a PDF or paste text — extracts name, structured projects, education, certifications, and skills; AI + deterministic merge for reliable keyword detection |
 | **Project Recommendations** | Beginner, intermediate, and advanced portfolio projects |
 | **Learning Roadmap** | Personalized four-phase plan driven by your actual skill gaps |
@@ -38,7 +43,9 @@ CareerCompass AI solves these challenges through intelligent analysis, personali
 | **Career Journey** | Visual progression from Student to Industry Ready |
 | **Export Career Report** | Downloadable markdown report of your full analysis |
 | **Progress Tracking** | Score history persisted locally — re-assess to watch your readiness grow |
+| **10 Career Paths** | AI Engineer, Software Engineer, Data Scientist, Full Stack, Data Analyst, DevOps, Backend, Mobile, Cybersecurity, and Cloud |
 | **Dark Mode** | Light editorial theme by default, with a system-aware dark mode toggle |
+| **Automated Tests** | Vitest unit tests for the analysis engine, resume extractor, AI provider, and rate limiter |
 
 ---
 
@@ -54,6 +61,8 @@ app/
 ├── projects/page.jsx         # Project recommendations
 ├── chat/page.jsx             # AI mentor chat
 ├── not-found.jsx             # Custom branded 404
+├── icon.svg                  # Branded teal compass favicon
+└── opengraph-image.tsx       # Dynamic social-share image
 └── api/
     ├── analyze/route.js      # Instant deterministic analysis
     ├── analyze/enrich/route.js  # Background AI enrichment
@@ -66,24 +75,28 @@ context/
 
 components/
 ├── Navbar.jsx, Footer.jsx    # Dark-mode toggle, skip link
-├── AIMentorInsights.jsx, ChatAgent.jsx, ResumeAnalyzer.jsx
+├── AIMentorInsights.jsx, ChatAgent.jsx, ProfileBuilder.jsx, ResumeAnalyzer.jsx
 ├── landing/                  # Landing page sections
 └── ui/                       # Design system primitives (Button, Badge, Reveal, …)
 
 lib/
-├── analyzer.js               # Deterministic analysis engine (sync build + async merge)
-├── aiProvider.js             # Groq wrapper: timeouts, retries, quota cache, JSON normalization
+├── analyzer.js               # Deterministic analysis engine (sync build + async merge, next-step logic)
+├── aiProvider.js             # Groq wrapper: timeouts, retries, quota cache, JSON normalization, SSE→text streaming
 ├── resumeExtractor.js        # Section-aware resume extraction + project dedupe
+├── intake.js                 # Conversational profile intake (field-by-field script + canned fallbacks)
 ├── mentorInsights.js         # AI mentor text generation
 ├── mentorInsightsStatic.js   # Deterministic mentor fallback (client-safe)
 ├── rateLimit.js              # Sliding-window rate limiter
 ├── apiClient.js              # Timeout-aware fetch helper
 └── exportReport.js           # Markdown report export
+
+# Unit tests (Vitest) – analyzer, resumeExtractor, aiProvider, intake, rateLimit
+*.test.js
 ```
 
 ### Data Flow
 
-1. User completes assessment on `/assessment` (optionally prefilled by resume upload)
+1. User completes assessment on `/assessment` via the quick form **or** the chat profile builder (resume upload also pre-fills)
 2. `/api/analyze` returns an instant deterministic result; if a resume was pasted, `/api/analyze/enrich` merges AI-detected skills in the background
 3. Results stored in `AnalysisContext` + `localStorage` (with session fallback)
 4. All pages read from shared context; `/analysis` shows score history
@@ -92,6 +105,7 @@ lib/
 
 - **Rate limits** apply per client (10–30 req/min depending on route) and uploads are capped at 15 MB / 300 KB of extracted text.
 - **AI is optional**: every AI call falls back to deterministic analysis. When Groq's daily token quota is hit, the app detects the 429, caches it, and serves static results instantly for the rest of the day.
+- **`/api/chat` streams**: the reply is sent as plain-text chunks (`text/plain`, `X-Agent` header tags the routing), the profile-builder mode (`mode: "intake"`) returns JSON.
 
 ---
 
@@ -114,6 +128,11 @@ cp .env.local.example .env.local   # if you have a Groq API key
 npm run dev
 ```
 
+> **Note**: `dev` runs with `--webpack` because Turbopack dev hits a React Client
+> Manifest bundler bug in this Next.js version (`AnalysisProvider` not found in
+> the client manifest). Production builds use Turbopack fine. Revisit dropping
+> the flag after a Next upgrade.
+
 Open [http://localhost:3000](http://localhost:3000)
 
 The app works **without an API key** — every AI feature falls back to deterministic analysis. To enable AI mentor insights, resume enrichment, and chat, set:
@@ -126,6 +145,7 @@ GROQ_API_KEY=your_key_here
 ```bash
 npm run build   # Production build
 npm run lint    # ESLint
+npm test        # Vitest unit tests
 ```
 
 ---
@@ -143,16 +163,17 @@ GitHub Copilot was used during development to:
 
 ## Future Plans
 
-Tracked in [`NEXT_PLANS.md`](NEXT_PLANS.md) — the living roadmap. In priority order:
+Tracked in [`NEXT_PLANS.md`](NEXT_PLANS.md) — the living roadmap.
 
-- [ ] **Streaming chat replies** — token-by-token SSE streaming so mentor answers appear as they're generated (Groq `stream: true`)
-- [ ] **Multi-agent routing** — an intent classifier routes chat messages to career, resume-reviewer, or study-planner agents, each with a specialized prompt
-- [ ] **Automated tests** — Vitest unit tests for the analyzer, resume extractor, AI provider, and rate limiter (would have caught past bugs early)
-- [ ] **Branding polish** — replace the default favicon with a branded teal compass mark, add an opengraph image
-- [ ] **README/cleanup** — drop the `--webpack` dev flag once Turbopack dev is confirmed, refresh docs
+- [ ] **Suggestion-chips persistence** — remember dismissed prompts per conversation
+- [ ] **Multi-instance rate limiting** — swap the in-memory limiter for a shared store (Redis/Upstash) before scaling out
+- [ ] **More career depth** — per-role interview question banks and salary/region context for each of the 10 paths
 
 ### Recently Completed
 
+- **True career-navigation agent upgrade**: streaming chat replies (Groq SSE → plain-text chunks), multi-agent routing with an intent classifier (career / resume-reviewer / study-planner), conversational profile intake that pre-fills and auto-runs the assessment, a deterministic "Your next move" that deep-links into the app, progress-aware mentor replies, and the career map expanded from 4 to 10 paths
+- Vitest test suite (69 tests) covering the analysis engine, resume extractor, AI provider, intake, and rate limiter
+- Branded teal compass favicon (`app/icon.svg`) and a dynamic Open Graph image (`app/opengraph-image.tsx`)
 - AI chat agent (`/chat`) with grounded, profile-aware mentor replies
 - Resume extraction overhaul: section-aware parsing, structured `{ title, description }` projects with fuzzy dedupe, AI + deterministic merge so real keywords are never reported as missing
 - Instant analysis: `/api/analyze` returns in ~100ms with AI enrichment in the background
