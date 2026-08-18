@@ -16,23 +16,39 @@ on:
 jobs:
   deploy:
     name: Deploy to Netlify
-    if: ${{ secrets.NETLIFY_AUTH_TOKEN != '' && secrets.NETLIFY_SITE_ID != '' }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
+      - name: Check secrets
+        id: check
+        run: |
+          if [ -n "$NETLIFY_AUTH_TOKEN" ] && [ -n "$NETLIFY_SITE_ID" ]; then
+            echo "has_secrets=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_secrets=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Netlify secrets not configured — skipping deploy."
+          fi
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+
       - name: Checkout
+        if: steps.check.outputs.has_secrets == 'true'
         uses: actions/checkout@v4
 
       - name: Setup Node.js
+        if: steps.check.outputs.has_secrets == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
 
       - name: Install dependencies
+        if: steps.check.outputs.has_secrets == 'true'
         run: npm ci
 
       - name: Deploy to Netlify
+        if: steps.check.outputs.has_secrets == 'true'
         run: npx netlify-cli deploy --build --prod --message "Deploy from GitHub Actions (${{ github.sha }})"
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
