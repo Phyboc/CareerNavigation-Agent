@@ -150,6 +150,43 @@ npm test        # Vitest unit tests
 
 ---
 
+## CI/CD
+
+This repo uses **GitHub Actions** for continuous integration and deployment.
+
+### Continuous Integration (`.github/workflows/ci.yml`)
+
+On every push and pull request, GitHub runs on a clean Ubuntu machine:
+
+1. `npm ci` (fresh install from the lockfile)
+2. `npm run lint`
+3. `npm test` (Vitest)
+4. `npm run build`
+
+If any step fails, the commit/PR shows a red ❌ and nothing merges broken code.
+
+### Continuous Deployment (`.github/workflows/deploy.yml`)
+
+On every push to `main`, the app deploys to **Netlify** through the Netlify CLI
+(`netlify deploy --build`), which uses Netlify's OpenNext adapter to package the
+Next.js server routes correctly.
+
+The deploy job is **skipped until you add these GitHub secrets** (Settings →
+Secrets and variables → Actions → New repository secret):
+
+| Secret | Where to get it |
+|---|---|
+| `NETLIFY_AUTH_TOKEN` | Netlify dashboard → User settings → Applications → Personal access tokens |
+| `NETLIFY_SITE_ID` | Netlify dashboard → your site → Site configuration → General |
+| `GROQ_API_KEY` | The same key used locally (only needed if the site env var isn't set on Netlify) |
+
+**Alternative:** skip the deploy workflow entirely and connect the repo through
+the Netlify dashboard (Add new site → Import from Git). Netlify then deploys on
+every push with the same OpenNext adapter — don't do both, or you'll get double
+deploys.
+
+---
+
 ## GitHub Copilot Usage
 
 GitHub Copilot was used during development to:

@@ -19,8 +19,12 @@ export default function Navbar() {
 	const [dark, setDark] = useState(false);
 
 	// Sync the toggle with the <html> class after mount (the layout script
-	// already applied the stored/system theme before paint).
+	// already applied the stored/system theme before paint). This is a one-time
+	// read of an external DOM value — not a cascading render — so the rule's
+	// concern doesn't apply and a lazy initializer would cause a hydration
+	// mismatch (server has no DOM to read the class from).
 	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect
 		setDark(document.documentElement.classList.contains("dark"));
 	}, []);
 

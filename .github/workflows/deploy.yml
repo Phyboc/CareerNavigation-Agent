@@ -1,0 +1,40 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+# Deploys to Netlify via the Netlify CLI. The `--build` flag runs the build
+# through Netlify's OpenNext adapter (auto-detected for Next.js), so server
+# routes/functions are packaged correctly — a plain `next build` + upload of
+# `.next` would NOT work.
+#
+# The job is skipped until you add these to the repo's GitHub secrets:
+#   NETLIFY_AUTH_TOKEN  (from Netlify dashboard → User settings → Applications)
+#   NETLIFY_SITE_ID     (from Netlify dashboard → Site configuration → General)
+#   GROQ_API_KEY        (same key you use locally)
+jobs:
+  deploy:
+    name: Deploy to Netlify
+    if: ${{ secrets.NETLIFY_AUTH_TOKEN != '' && secrets.NETLIFY_SITE_ID != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Deploy to Netlify
+        run: npx netlify-cli deploy --build --prod --message "Deploy from GitHub Actions (${{ github.sha }})"
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
