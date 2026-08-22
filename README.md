@@ -4,6 +4,8 @@
 
 CareerCompass AI is an AI-powered career guidance platform that helps students discover their ideal career path, identify skill gaps, and build a personalized roadmap for success.
 
+🚀 **[Live Demo](https://careernavigation-agent.netlify.app/)**
+
 Built for the **Microsoft Agents League Hackathon**.
 
 ---
